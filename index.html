@@ -1,0 +1,802 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MPGB | BC Appointment Portal</title>
+
+<style>
+:root {
+  --green: #006633;
+  --green2: #008746;
+  --light: #f3f7f4;
+  --border: #dce5df;
+  --text: #20352a;
+  --muted: #68786e;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: var(--light);
+  color: var(--text);
+}
+button, input, select, textarea { font: inherit; }
+button { cursor: pointer; }
+.topbar {
+  background: var(--green);
+  color: white;
+  padding: 15px 22px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+}
+.brand { display: flex; align-items: center; gap: 12px; }
+.logo {
+  background: white;
+  color: var(--green);
+  border-radius: 10px;
+  width: 45px;
+  height: 45px;
+  display: grid;
+  place-items: center;
+  font-weight: 900;
+  font-size: 18px;
+}
+.brand h1 { font-size: 19px; margin: 0 0 4px; }
+.brand p { font-size: 12px; margin: 0; opacity: .85; }
+.top-right { font-size: 12px; text-align: right; }
+.layout { display: flex; min-height: calc(100vh - 75px); }
+.sidebar {
+  width: 235px;
+  flex-shrink: 0;
+  background: white;
+  border-right: 1px solid var(--border);
+  padding: 20px 12px;
+}
+.menu-title {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  padding: 10px;
+}
+.nav {
+  display: block;
+  width: 100%;
+  text-align: left;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  padding: 12px;
+  margin-bottom: 5px;
+  color: #40564a;
+  font-size: 14px;
+}
+.nav:hover, .nav.active { background: #e5f3e9; color: var(--green); font-weight: bold; }
+.main { flex: 1; min-width: 0; padding: 25px; }
+.page { display: none; }
+.page.active { display: block; }
+.page-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 22px;
+}
+.page-heading h2 { margin: 0 0 6px; font-size: 23px; }
+.page-heading p { margin: 0; font-size: 13px; color: var(--muted); }
+.btn {
+  border: 0;
+  border-radius: 7px;
+  padding: 10px 15px;
+  background: var(--green);
+  color: white;
+  font-weight: bold;
+}
+.btn:hover { background: var(--green2); }
+.btn.secondary { background: #e6eee8; color: var(--green); }
+.btn.small { padding: 7px 10px; font-size: 12px; }
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 15px;
+  margin-bottom: 22px;
+}
+.stat, .panel {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 18px;
+}
+.stat-label { font-size: 12px; color: var(--muted); }
+.stat-number { font-size: 29px; font-weight: bold; margin-top: 12px; color: var(--green); }
+.panel { margin-bottom: 20px; }
+.panel h3 { font-size: 16px; margin: 0 0 18px; }
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 15px;
+}
+.field { min-width: 0; }
+.field.full { grid-column: 1 / -1; }
+label { display: block; font-size: 12px; font-weight: bold; margin-bottom: 7px; }
+input, select, textarea {
+  width: 100%;
+  border: 1px solid #cbd8cf;
+  border-radius: 7px;
+  background: white;
+  padding: 10px;
+  color: var(--text);
+  outline: none;
+}
+input:focus, select:focus, textarea:focus {
+  border-color: var(--green2);
+  box-shadow: 0 0 0 2px #00874615;
+}
+textarea { min-height: 78px; resize: vertical; }
+.section-title {
+  color: var(--green);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 9px;
+  margin: 24px 0 17px;
+  font-size: 14px;
+}
+.actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px; }
+.table-wrap { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; background: white; }
+th, td {
+  text-align: left;
+  padding: 12px;
+  border-bottom: 1px solid var(--border);
+  font-size: 12px;
+  white-space: nowrap;
+}
+th { background: #edf5ef; color: var(--green); }
+.status {
+  display: inline-block;
+  background: #e8f4eb;
+  color: var(--green);
+  border-radius: 20px;
+  padding: 5px 8px;
+  font-size: 11px;
+}
+.filters { display: flex; gap: 10px; margin-bottom: 15px; }
+.filters input, .filters select { max-width: 300px; }
+.notice {
+  background: #fff7df;
+  color: #735514;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  margin-bottom: 15px;
+}
+.message { margin-top: 12px; font-size: 13px; white-space: pre-wrap; }
+.message.error { color: #b42318; }
+.message.success { color: var(--green); }
+.footer { text-align: center; color: var(--muted); font-size: 11px; padding: 20px; }
+.mobile-menu { display: none; }
+.empty { text-align: center; padding: 30px; color: var(--muted); }
+@media(max-width: 1050px) {
+  .stats { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+}
+@media(max-width: 700px) {
+  .topbar { padding: 12px; }
+  .brand h1 { font-size: 15px; }
+  .top-right { display: none; }
+  .mobile-menu { display: inline-block; margin-bottom: 12px; }
+  .layout { display: block; }
+  .sidebar { display: none; width: 100%; border-bottom: 1px solid var(--border); }
+  .sidebar.open { display: block; }
+  .main { padding: 14px; }
+  .stats { gap: 8px; }
+  .stat { padding: 13px; }
+  .stat-number { font-size: 24px; }
+  .grid { grid-template-columns: 1fr; }
+  .field.full { grid-column: auto; }
+  .page-heading { align-items: flex-start; }
+  .page-heading h2 { font-size: 20px; }
+  .filters { flex-direction: column; }
+  .filters input, .filters select { max-width: none; }
+}
+</style>
+</head>
+
+<body>
+<header class="topbar">
+  <div class="brand">
+    <div class="logo">MPGB</div>
+    <div>
+      <h1>BC Appointment Management</h1>
+      <p>Regional Office Jabalpur · Madhya Pradesh Gramin Bank</p>
+    </div>
+  </div>
+  <div class="top-right">
+    <strong>REGIONAL OFFICE</strong><br>
+    Jabalpur, Madhya Pradesh
+  </div>
+</header>
+
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="menu-title">MAIN MENU</div>
+    <button class="nav active" data-page="dashboard">▦ &nbsp; Dashboard</button>
+    <button class="nav" data-page="new">＋ &nbsp; New Appointment</button>
+    <button class="nav" data-page="applications">▤ &nbsp; Applications</button>
+    <button class="nav" data-page="documents">▣ &nbsp; PDF Documents</button>
+    <button class="nav" data-page="workflow">↻ &nbsp; Workflow History</button>
+    <div class="menu-title">SYSTEM</div>
+    <button class="nav" data-page="settings">⚙ &nbsp; Connection Settings</button>
+  </aside>
+
+  <main class="main">
+    <button class="btn secondary mobile-menu" id="menuToggle">☰ Menu</button>
+
+    <!-- DASHBOARD -->
+    <section class="page active" id="page-dashboard">
+      <div class="page-heading">
+        <div>
+          <h2>Dashboard</h2>
+          <p>BC appointment status overview</p>
+        </div>
+        <button class="btn" onclick="showPage('new')">＋ New Application</button>
+      </div>
+
+      <div class="notice">
+        This portal is intended for authorized Regional Office users.
+        Do not upload confidential applicant documents to a public repository.
+      </div>
+
+      <div class="stats">
+        <div class="stat"><div class="stat-label">Total Applications</div><div class="stat-number" id="totalCount">—</div></div>
+        <div class="stat"><div class="stat-label">Application Received</div><div class="stat-number" id="receivedCount">—</div></div>
+        <div class="stat"><div class="stat-label">Approval Pending</div><div class="stat-number" id="pendingCount">—</div></div>
+        <div class="stat"><div class="stat-label">Sanction Received</div><div class="stat-number" id="sanctionCount">—</div></div>
+      </div>
+
+      <div class="panel">
+        <h3>Recent Applications</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Application ID</th><th>SOL ID</th><th>Applicant</th><th>Branch</th><th>Status</th></tr></thead>
+            <tbody id="recentRows"><tr><td colspan="5" class="empty">Connect the backend to load applications.</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- NEW APPLICATION -->
+    <section class="page" id="page-new">
+      <div class="page-heading">
+        <div><h2>New BC Appointment</h2><p>Enter applicant and kiosk information</p></div>
+      </div>
+
+      <form id="applicationForm" class="panel">
+        <h3>1. Kiosk and Branch Details</h3>
+        <div class="grid">
+          <div class="field">
+            <label for="Sol_ID">SOL ID *</label>
+            <input id="Sol_ID" name="Sol_ID" required placeholder="Enter SOL ID">
+          </div>
+          <div class="field">
+            <label for="Link_Branch">Link Branch *</label>
+            <input id="Link_Branch" name="Link_Branch" required>
+          </div>
+          <div class="field">
+            <label for="Sol_District">District</label>
+            <input id="Sol_District" name="Sol_District">
+          </div>
+          <div class="field">
+            <label for="Sanc_Type">Sanction Type *</label>
+            <select id="Sanc_Type" name="Sanc_Type" required>
+              <option value="">Select</option><option value="NEW">NEW</option><option value="REPL.">REPLACEMENT</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="Name_of_BCs">BC Applicant Name *</label>
+            <input id="Name_of_BCs" name="Name_of_BCs" required>
+          </div>
+          <div class="field">
+            <label for="Gender">Gender</label>
+            <select id="Gender" name="Gender"><option value="">Select</option><option>Male</option><option>Female</option><option>Other</option></select>
+          </div>
+          <div class="field">
+            <label for="Kiosk_Location">Kiosk / Village Location *</label>
+            <input id="Kiosk_Location" name="Kiosk_Location" required>
+          </div>
+          <div class="field">
+            <label for="Location_Type">Location Type</label>
+            <select id="Location_Type" name="Location_Type"><option value="">Select</option><option>SSA</option><option>NON SSA</option></select>
+          </div>
+          <div class="field">
+            <label for="SSA_Name">SSA Name (if applicable)</label>
+            <input id="SSA_Name" name="SSA_Name">
+          </div>
+          <div class="field">
+            <label for="VILLAGE_CODE">Village Code / LGD Code</label>
+            <input id="VILLAGE_CODE" name="VILLAGE_CODE">
+          </div>
+          <div class="field">
+            <label for="New_Corp_BCs">New Corporate BC Name</label>
+            <input id="New_Corp_BCs" name="New_Corp_BCs">
+          </div>
+          <div class="field">
+            <label for="Old_Corp_BC">Old Corporate BC (replacement only)</label>
+            <input id="Old_Corp_BC" name="Old_Corp_BC">
+          </div>
+          <div class="field">
+            <label for="Old_BC_ID">Old BC ID</label>
+            <input id="Old_BC_ID" name="Old_BC_ID">
+          </div>
+          <div class="field">
+            <label for="Old_BC_Name">Old BC Name</label>
+            <input id="Old_BC_Name" name="Old_BC_Name">
+          </div>
+          <div class="field">
+            <label for="Old_BC_OD_ACC">Old BC OD Account</label>
+            <input id="Old_BC_OD_ACC" name="Old_BC_OD_ACC">
+          </div>
+        </div>
+
+        <h3 class="section-title">2. Personal Details</h3>
+        <div class="grid">
+          <div class="field"><label for="Father_Husband_Name">Father / Husband Name</label><input id="Father_Husband_Name" name="Father_Husband_Name"></div>
+          <div class="field"><label for="DOB">Date of Birth</label><input type="date" id="DOB" name="DOB"></div>
+          <div class="field"><label for="Marital_Status">Marital Status</label><select id="Marital_Status" name="Marital_Status"><option value="">Select</option><option>Married</option><option>Unmarried</option><option>Other</option></select></div>
+          <div class="field"><label for="Education">Education</label><input id="Education" name="Education"></div>
+          <div class="field"><label for="Mobile_No">Mobile Number *</label><input id="Mobile_No" name="Mobile_No" type="tel" inputmode="numeric" pattern="[6-9][0-9]{9}" maxlength="10" required></div>
+          <div class="field"><label for="Email_ID">Email</label><input id="Email_ID" name="Email_ID" type="email"></div>
+          <div class="field full"><label for="Permanent_Address">Permanent Address</label><textarea id="Permanent_Address" name="Permanent_Address"></textarea></div>
+          <div class="field full"><label for="Communication_Address">Communication Address</label><textarea id="Communication_Address" name="Communication_Address"></textarea></div>
+          <div class="field"><label for="PIN_Code">PIN Code</label><input id="PIN_Code" name="PIN_Code" inputmode="numeric" maxlength="6"></div>
+          <div class="field"><label for="Aadhaar_No">Aadhaar Number</label><input id="Aadhaar_No" name="Aadhaar_No" inputmode="numeric" maxlength="12" placeholder="Only if authorized"></div>
+          <div class="field"><label for="PAN_No">PAN Number</label><input id="PAN_No" name="PAN_No" maxlength="10" style="text-transform:uppercase"></div>
+        </div>
+
+        <h3 class="section-title">3. Banking and Qualification Details</h3>
+        <div class="grid">
+          <div class="field"><label for="Bank_Name">Bank Name</label><input id="Bank_Name" name="Bank_Name"></div>
+          <div class="field"><label for="Bank_Account_No">Bank Account Number</label><input id="Bank_Account_No" name="Bank_Account_No"></div>
+          <div class="field"><label for="IFSC_Code">IFSC Code</label><input id="IFSC_Code" name="IFSC_Code" maxlength="11"></div>
+          <div class="field"><label for="Cheque_Facility">Cheque Facility</label><select id="Cheque_Facility" name="Cheque_Facility"><option value="">Select</option><option>Yes</option><option>No</option></select></div>
+          <div class="field"><label for="Computer_Literate">Computer Literate</label><select id="Computer_Literate" name="Computer_Literate"><option value="">Select</option><option>Yes</option><option>No</option></select></div>
+          <div class="field"><label for="Computer_Qualification">Computer Qualification</label><input id="Computer_Qualification" name="Computer_Qualification"></div>
+          <div class="field"><label for="Present_Occupation">Present Occupation</label><input id="Present_Occupation" name="Present_Occupation"></div>
+          <div class="field"><label for="Financial_Product_Experience">Financial Product Experience</label><input id="Financial_Product_Experience" name="Financial_Product_Experience"></div>
+          <div class="field"><label for="Residence_Years">Years Residing at Location</label><input id="Residence_Years" name="Residence_Years" type="number" min="0"></div>
+          <div class="field"><label for="Police_Record_Declaration">Police Record Declaration</label><select id="Police_Record_Declaration" name="Police_Record_Declaration"><option value="">Select</option><option>No adverse record declared</option><option>Adverse record declared</option></select></div>
+          <div class="field"><label for="RO_Receipt_Date">RO Receipt Date</label><input id="RO_Receipt_Date" name="RO_Receipt_Date" type="date"></div>
+        </div>
+
+        <h3 class="section-title">4. Application Form PDF</h3>
+        <div class="notice">Upload the completed application PDF after saving the application. Maximum size: 8 MB.</div>
+        <div class="field">
+          <label for="ApplicationPDF">Completed Application PDF</label>
+          <input type="file" id="ApplicationPDF" accept="application/pdf,.pdf">
+        </div>
+        <div class="field" style="margin-top:15px">
+          <label for="Remarks">Remarks</label>
+          <textarea id="Remarks" name="Remarks"></textarea>
+        </div>
+
+        <div class="actions">
+          <button class="btn" type="submit" id="saveBtn">Save Application</button>
+          <button class="btn secondary" type="reset">Clear Form</button>
+        </div>
+        <div class="message" id="formMessage"></div>
+      </form>
+    </section>
+
+    <!-- APPLICATION LIST -->
+    <section class="page" id="page-applications">
+      <div class="page-heading"><div><h2>Applications</h2><p>Search and review BC applications</p></div><button class="btn" onclick="loadApplications()">↻ Refresh</button></div>
+      <div class="panel">
+        <div class="filters">
+          <input id="searchText" placeholder="Search ID, name, SOL or branch">
+          <select id="statusFilter">
+            <option value="">All statuses</option>
+            <option>Application Received</option><option>Under Review</option><option>Approval Pending</option><option>Sanction Received</option><option>Rejected</option>
+          </select>
+          <button class="btn" onclick="loadApplications()">Search</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Application ID</th><th>SOL ID</th><th>Applicant</th><th>Mobile</th><th>Status</th><th>Application PDF</th><th>Sanction PDF</th></tr></thead>
+            <tbody id="applicationRows"><tr><td colspan="7" class="empty">Load applications after connecting the API.</td></tr></tbody>
+          </table>
+        </div>
+        <div class="message" id="listMessage"></div>
+      </div>
+    </section>
+
+    <!-- DOCUMENTS -->
+    <section class="page" id="page-documents">
+      <div class="page-heading"><div><h2>PDF Documents</h2><p>Upload application forms and HO sanction letters</p></div></div>
+      <div class="panel">
+        <h3>Upload PDF for an Existing Application</h3>
+        <div class="grid">
+          <div class="field"><label for="docApplicationId">Application ID</label><input id="docApplicationId" placeholder="BC-YYYYMMDD-XXXXXXXX"></div>
+          <div class="field"><label for="docType">Document Type</label><select id="docType"><option value="APPLICATION">Application Form PDF</option><option value="SANCTION">HO Sanction Letter PDF</option></select></div>
+          <div class="field"><label for="docFile">Select PDF (max 8 MB)</label><input type="file" id="docFile" accept="application/pdf,.pdf"></div>
+        </div>
+        <div class="actions"><button class="btn" onclick="uploadDocument()">Upload PDF</button></div>
+        <div class="message" id="docMessage"></div>
+      </div>
+      <div class="panel">
+        <h3>Open Stored Documents</h3>
+        <div class="grid">
+          <div class="field"><label for="openApplicationId">Application ID</label><input id="openApplicationId"></div>
+          <div class="field"><label for="openDocType">Document Type</label><select id="openDocType"><option value="APPLICATION">Application PDF</option><option value="SANCTION">HO Sanction Letter</option></select></div>
+        </div>
+        <div class="actions"><button class="btn secondary" onclick="openDocument()">Open PDF</button></div>
+        <div class="message" id="openMessage"></div>
+      </div>
+    </section>
+
+    <!-- HISTORY -->
+    <section class="page" id="page-workflow">
+      <div class="page-heading"><div><h2>Workflow History</h2><p>Track application status changes</p></div></div>
+      <div class="panel">
+        <div class="filters">
+          <input id="historyId" placeholder="Enter Application ID">
+          <button class="btn" onclick="loadHistory()">View History</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Date</th><th>Previous Status</th><th>New Status</th><th>Action By</th><th>Remarks</th></tr></thead>
+            <tbody id="historyRows"><tr><td colspan="5" class="empty">Enter an application ID.</td></tr></tbody>
+          </table>
+        </div>
+        <div class="message" id="historyMessage"></div>
+      </div>
+    </section>
+
+    <!-- SETTINGS -->
+    <section class="page" id="page-settings">
+      <div class="page-heading"><div><h2>Connection Settings</h2><p>Configure the Apps Script API endpoint</p></div></div>
+      <div class="panel">
+        <div class="notice">Do not enter passwords, API secrets, Aadhaar data, or other confidential information here. The endpoint is visible to visitors of this website.</div>
+        <div class="field">
+          <label for="apiUrl">Google Apps Script Web App URL</label>
+          <input id="apiUrl" type="url" placeholder="https://script.google.com/macros/s/DEPLOYMENT_ID/exec">
+        </div>
+        <div class="actions">
+          <button class="btn" onclick="saveEndpoint()">Save Endpoint</button>
+          <button class="btn secondary" onclick="testConnection()">Test Connection</button>
+        </div>
+        <div class="message" id="settingsMessage"></div>
+        <p style="font-size:12px;color:#68786e;margin-top:18px">
+          This frontend requires a matching HTTP API in Code.gs. The existing
+          google.script.run functions alone do not provide a GitHub Pages API.
+        </p>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div class="footer">MPGB · Regional Office Jabalpur · BC Appointment Management Portal</div>
+
+<script>
+/*
+ * BACKEND INTEGRATION
+ *
+ * The Google Apps Script backend must implement doPost(e) with
+ * an action-based JSON API. The Code.gs provided earlier does not
+ * yet contain this HTTP API router.
+ *
+ * Do not use this page for real applicant data until API access,
+ * authorization, CORS behaviour and Drive permissions are tested.
+ */
+
+let API_URL = '';
+
+const $ = id => document.getElementById(id);
+
+function showMessage(id, message, error) {
+  const el = $(id);
+  el.textContent = message;
+  el.className = 'message ' + (error ? 'error' : 'success');
+}
+
+function showPage(page) {
+  document.querySelectorAll('.page').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.nav').forEach(el => el.classList.remove('active'));
+
+  const target = $('page-' + page);
+  if (target) target.classList.add('active');
+
+  const nav = document.querySelector('.nav[data-page="' + page + '"]');
+  if (nav) nav.classList.add('active');
+
+  $('sidebar').classList.remove('open');
+
+  if (page === 'dashboard') loadDashboard();
+  if (page === 'applications') loadApplications();
+}
+
+document.querySelectorAll('.nav').forEach(button => {
+  button.addEventListener('click', () => showPage(button.dataset.page));
+});
+
+$('menuToggle').addEventListener('click', () => {
+  $('sidebar').classList.toggle('open');
+});
+
+function saveEndpoint() {
+  const value = $('apiUrl').value.trim();
+
+  if (!/^https:\/\/script\.google\.com\/macros\/s\/[^/]+\/exec$/.test(value)) {
+    showMessage('settingsMessage', 'Enter a valid deployed Apps Script /exec URL.', true);
+    return;
+  }
+
+  API_URL = value;
+  showMessage('settingsMessage',
+    'Endpoint entered for this page session. Refreshing the page clears this value.', false);
+}
+
+async function api(action, data = {}) {
+  if (!API_URL) throw new Error('Open Connection Settings and enter the Apps Script URL.');
+
+  /*
+   * Requires doPost(e) to accept JSON actions and return JSON.
+   * Apps Script redirects/CORS may require a suitable deployment
+   * or same-origin proxy; test with non-sensitive data first.
+   */
+  const response = await fetch(API_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify({ action, data })
+  });
+
+  if (!response.ok) throw new Error('HTTP error: ' + response.status);
+
+  const result = await response.json();
+  if (!result.success) throw new Error(result.message || 'API request failed.');
+
+  return result.data;
+}
+
+async function testConnection() {
+  try {
+    const result = await api('testPortal');
+    showMessage('settingsMessage', 'Connection successful.\n' + JSON.stringify(result), false);
+  } catch (err) {
+    showMessage('settingsMessage',
+      'Connection failed: ' + err.message +
+      '\nThe Apps Script HTTP API router must be implemented and deployed.', true);
+  }
+}
+
+function formObject(form) {
+  const obj = {};
+  new FormData(form).forEach((value, key) => obj[key] = value);
+  return obj;
+}
+
+$('applicationForm').addEventListener('submit', async event => {
+  event.preventDefault();
+
+  const button = $('saveBtn');
+  button.disabled = true;
+  button.textContent = 'Saving...';
+  showMessage('formMessage', 'Submitting application...', false);
+
+  try {
+    const data = formObject(event.target);
+    const result = await api('saveApplication', data);
+    const applicationId = result.Application_ID;
+
+    showMessage('formMessage',
+      'Application saved. ID: ' + applicationId, false);
+
+    const file = $('ApplicationPDF').files[0];
+
+    if (file) {
+      await sendFile(applicationId, file, 'APPLICATION');
+      showMessage('formMessage',
+        'Application saved and PDF uploaded.\nApplication ID: ' + applicationId, false);
+    }
+
+    event.target.reset();
+    await loadDashboard();
+  } catch (err) {
+    showMessage('formMessage', 'Save failed: ' + err.message, true);
+  } finally {
+    button.disabled = false;
+    button.textContent = 'Save Application';
+  }
+});
+
+function sendFile(applicationId, file, type) {
+  return new Promise((resolve, reject) => {
+    if (file.type !== 'application/pdf' && !/\.pdf$/i.test(file.name)) {
+      reject(new Error('Select a PDF file.'));
+      return;
+    }
+
+    if (file.size > 8 * 1024 * 1024) {
+      reject(new Error('PDF must be 8 MB or smaller.'));
+      return;
+    }
+
+    const reader = new FileReader();
+
+    reader.onload = async () => {
+      try {
+        const base64 = String(reader.result).split(',')[1];
+        const action = type === 'APPLICATION'
+          ? 'uploadApplicationPdf'
+          : 'uploadSanctionPdf';
+
+        const result = await api(action, {
+          Application_ID: applicationId,
+          fileName: file.name,
+          mimeType: 'application/pdf',
+          base64: base64
+        });
+
+        resolve(result);
+      } catch (err) {
+        reject(err);
+      }
+    };
+
+    reader.onerror = () => reject(new Error('Unable to read PDF.'));
+    reader.readAsDataURL(file);
+  });
+}
+
+async function uploadDocument() {
+  const id = $('docApplicationId').value.trim();
+  const file = $('docFile').files[0];
+  const type = $('docType').value;
+
+  if (!id || !file) {
+    showMessage('docMessage', 'Enter Application ID and select a PDF.', true);
+    return;
+  }
+
+  try {
+    showMessage('docMessage', 'Uploading PDF...', false);
+    await sendFile(id, file, type);
+    showMessage('docMessage', 'PDF uploaded successfully.', false);
+  } catch (err) {
+    showMessage('docMessage', 'Upload failed: ' + err.message, true);
+  }
+}
+
+async function openDocument() {
+  const id = $('openApplicationId').value.trim();
+  const type = $('openDocType').value;
+
+  if (!id) {
+    showMessage('openMessage', 'Enter Application ID.', true);
+    return;
+  }
+
+  try {
+    const result = await api('getDocumentUrl', {
+      Application_ID: id,
+      type: type
+    });
+
+    const url = typeof result === 'string' ? result : result.url;
+
+    if (!url) throw new Error('No document is stored for this application.');
+
+    window.open(url, '_blank', 'noopener,noreferrer');
+    showMessage('openMessage', 'Document link opened in a new tab.', false);
+  } catch (err) {
+    showMessage('openMessage', 'Unable to open document: ' + err.message, true);
+  }
+}
+
+function escapeHTML(value) {
+  return String(value ?? '').replace(/[&<>"']/g, char => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;',
+    '"': '&quot;', "'": '&#39;'
+  })[char]);
+}
+
+function pdfLink(url, label) {
+  if (!url) return '—';
+  return '<a href="' + escapeHTML(url) +
+    '" target="_blank" rel="noopener noreferrer">' +
+    escapeHTML(label) + '</a>';
+}
+
+async function loadApplications() {
+  try {
+    $('applicationRows').innerHTML =
+      '<tr><td colspan="7" class="empty">Loading...</td></tr>';
+
+    const data = await api('getApplications', {
+      search: $('searchText').value.trim(),
+      status: $('statusFilter').value
+    });
+
+    const rows = Array.isArray(data) ? data : (data.applications || []);
+
+    $('applicationRows').innerHTML = rows.length ? rows.map(r =>
+      '<tr>' +
+      '<td>' + escapeHTML(r.Application_ID) + '</td>' +
+      '<td>' + escapeHTML(r.Sol_ID) + '</td>' +
+      '<td>' + escapeHTML(r.Name_of_BCs) + '</td>' +
+      '<td>' + escapeHTML(r.Mobile_No) + '</td>' +
+      '<td><span class="status">' + escapeHTML(r.Application_Status) + '</span></td>' +
+      '<td>' + pdfLink(r.Application_PDF_URL, 'View PDF') + '</td>' +
+      '<td>' + pdfLink(r.HO_Sanction_Letter_URL, 'View Letter') + '</td>' +
+      '</tr>'
+    ).join('') :
+      '<tr><td colspan="7" class="empty">No applications found.</td></tr>';
+
+    showMessage('listMessage', 'Applications loaded: ' + rows.length, false);
+  } catch (err) {
+    $('applicationRows').innerHTML =
+      '<tr><td colspan="7" class="empty">Unable to load applications.</td></tr>';
+    showMessage('listMessage',
+      err.message + ' — connect the matching Code.gs HTTP API first.', true);
+  }
+}
+
+async function loadDashboard() {
+  try {
+    const result = await api('getPortalSummary');
+
+    $('totalCount').textContent = result.total ?? 0;
+    $('receivedCount').textContent = result.applicationReceived ?? 0;
+    $('pendingCount').textContent = result.approvalPending ?? 0;
+    $('sanctionCount').textContent = result.sanctionReceived ?? 0;
+
+    const apps = await api('getApplications', {});
+    const rows = Array.isArray(apps) ? apps : (apps.applications || []);
+
+    $('recentRows').innerHTML = rows.slice(0, 8).map(r =>
+      '<tr><td>' + escapeHTML(r.Application_ID) + '</td>' +
+      '<td>' + escapeHTML(r.Sol_ID) + '</td>' +
+      '<td>' + escapeHTML(r.Name_of_BCs) + '</td>' +
+      '<td>' + escapeHTML(r.Link_Branch) + '</td>' +
+      '<td><span class="status">' + escapeHTML(r.Application_Status) + '</span></td></tr>'
+    ).join('') || '<tr><td colspan="5" class="empty">No applications yet.</td></tr>';
+
+  } catch (err) {
+    ['totalCount','receivedCount','pendingCount','sanctionCount']
+      .forEach(id => $(id).textContent = '—');
+
+    $('recentRows').innerHTML =
+      '<tr><td colspan="5" class="empty">Configure and test the backend connection in Settings.</td></tr>';
+  }
+}
+
+async function loadHistory() {
+  const id = $('historyId').value.trim();
+
+  if (!id) {
+    showMessage('historyMessage', 'Enter an Application ID.', true);
+    return;
+  }
+
+  try {
+    const result = await api('getWorkflowHistory', { Application_ID: id });
+    const rows = Array.isArray(result) ? result : (result.history || []);
+
+    $('historyRows').innerHTML = rows.map(r =>
+      '<tr><td>' + escapeHTML(r.Action_Date) + '</td>' +
+      '<td>' + escapeHTML(r.Previous_Status) + '</td>' +
+      '<td>' + escapeHTML(r.New_Status) + '</td>' +
+      '<td>' + escapeHTML(r.Action_By) + '</td>' +
+      '<td>' + escapeHTML(r.Remarks) + '</td></tr>'
+    ).join('') || '<tr><td colspan="5" class="empty">No history found.</td></tr>';
+
+    showMessage('historyMessage', 'History loaded.', false);
+  } catch (err) {
+    showMessage('historyMessage', 'Unable to load history: ' + err.message, true);
+  }
+}
+</script>
+</body>
+</html>
