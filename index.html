@@ -81,7 +81,22 @@ function section(which){['listPage','formPage','detailPage'].forEach(id=>$(id).c
 function newApplication(){resetForm();$('RO_Receipt_Date').value=new Date().toISOString().slice(0,10);section('formPage');}
 function branchChanged(){let b=(initData.branches||[]).find(x=>x.Sol_ID===$('Sol_ID').value);$('Link_Branch').value=b?b.Link_Branch:'';$('Sol_District').value=b?b.Sol_District:'';}
 function toggleOld(){let y=$('Sanc_Type').value==='REPLACEMENT';$('oldFields').classList.toggle('hidden',!y);if(!y)['Old_Corp_BC','Old_BC_ID','Old_BC_Name','Old_BC_OD_ACC'].forEach(k=>$(k).value='');}
-function toggleSSA(){let t=$('Location_Type').value,y=t==='SSA',bc=t==='BC LOCATION';$('ssaField').classList.toggle('hidden',!y);$('lgdFields').classList.toggle('hidden',!bc);if(!y)$('SSA_Name').value='';if(!bc){['District_Name','District_Code','Sub_District_Name','Sub_District_Code','Village_Name','Village_Code'].forEach(k=>$(k).value='');}else popufunction normKey(v){return String(v==null?'':v).toLowerCase().replace(/[^a-z0-9]/g,'');}
+function toggleSSA(){
+  const t=$('Location_Type').value;
+  const isSSA=t==='SSA';
+  const isBC=t==='BC LOCATION';
+  $('ssaField').classList.toggle('hidden',!isSSA);
+  $('lgdFields').classList.toggle('hidden',!isBC);
+  if(!isSSA) $('SSA_Name').value='';
+  if(!isBC){
+    ['District_Name','District_Code','Sub_District_Name','Sub_District_Code','Village_Name','Village_Code'].forEach(k=>$(k).value='');
+    $('Sub_District_Name').disabled=true;
+    $('Village_Name').disabled=true;
+  } else {
+    populateDistricts();
+  }
+}
+function normKey(v){return String(v==null?'':v).toLowerCase().replace(/[^a-z0-9]/g,'');}
 function normalizeLGDRows(rows){
   return (rows||[]).map(r=>{
     const o={}; Object.keys(r||{}).forEach(k=>o[normKey(k)]=r[k]);
@@ -127,8 +142,6 @@ function villageChanged(){
   const a=lgdRows().find(x=>x.District_Name===$('District_Name').value&&x.Sub_District_Name===$('Sub_District_Name').value&&x.Village_Name===$('Village_Name').value);
   $('Village_Code').value=a?.Village_Code||'';
 }
-
-illage_Code||'';}
 function resetForm(){$('appForm').reset();$('Application_ID').value='';$('Link_Branch').value='';$('Sol_District').value='';$('formTitle').textContent='New BC Application';$('saveBtn').textContent='Save Application';showAlert('formAlert','');toggleOld();toggleSSA();calcScore();$('Sub_District_Name').disabled=true;$('Village_Name').disabled=true;}
 function calcScore(){let ks=['Score_Location','Score_Reputation','Score_Age','Score_Education','Score_Banking','Score_Computer_Literacy','Score_Present_Occupation','Score_Experience','Score_Annual_Income'];let total=ks.reduce((n,k)=>n+Number($(k)?.value||0),0);if($('Score_Total'))$('Score_Total').value=total;if($('Score_Qualifies'))$('Score_Qualifies').value=total>=18?'YES':'NO';}
 function dataForm(){let d={};formFields.forEach(k=>{if($(k))d[k]=$(k).value.trim();});d.PAN_No=(d.PAN_No||'').toUpperCase();return d;}
