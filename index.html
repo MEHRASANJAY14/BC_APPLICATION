@@ -70,7 +70,7 @@ async function boot(){
   // Populate SOL IDs immediately from the hardcoded master, even if API/authentication fails.
   initData={branches:FALLBACK_BRANCHES.map(b=>({Sol_ID:b[0],Link_Branch:b[1],Sol_District:b[2]})),lgd:[]};
   renderBranches();
-  try{const remote=await call('getInitialData');if(remote&&Array.isArray(remote.branches)&&remote.branches.length)initData.branches=remote.branches;if(remote&&Array.isArray(remote.lgd))initData.lgd=remote.lgd;renderBranches();populateDistricts();await refreshData();}
+  try{const remote=await call('getInitialData');if(remote&&Array.isArray(remote.branches)&&remote.branches.length)initData.branches=remote.branches;if(remote&&Array.isArray(remote.lgd))initData.lgd=normalizeLGDRows(remote.lgd);renderBranches();populateDistricts();await refreshData();}
   catch(e){populateDistricts();showAlert('alert','Branch list is available from the hardcoded master, but application data/API could not load: '+e.message+'. Check USERS access, API_URL and Web App deployment.');renderTable();}
 }
 function renderBranches(){ $('Sol_ID').innerHTML='<option value="">-- Select Branch --</option>'+(initData.branches||[]).map(b=>`<option value="${esc(b.Sol_ID)}">${esc(b.Sol_ID)} - ${esc(b.Link_Branch)}</option>`).join(''); }
@@ -81,13 +81,54 @@ function section(which){['listPage','formPage','detailPage'].forEach(id=>$(id).c
 function newApplication(){resetForm();$('RO_Receipt_Date').value=new Date().toISOString().slice(0,10);section('formPage');}
 function branchChanged(){let b=(initData.branches||[]).find(x=>x.Sol_ID===$('Sol_ID').value);$('Link_Branch').value=b?b.Link_Branch:'';$('Sol_District').value=b?b.Sol_District:'';}
 function toggleOld(){let y=$('Sanc_Type').value==='REPLACEMENT';$('oldFields').classList.toggle('hidden',!y);if(!y)['Old_Corp_BC','Old_BC_ID','Old_BC_Name','Old_BC_OD_ACC'].forEach(k=>$(k).value='');}
-function toggleSSA(){let t=$('Location_Type').value,y=t==='SSA',bc=t==='BC LOCATION';$('ssaField').classList.toggle('hidden',!y);$('lgdFields').classList.toggle('hidden',!bc);if(!y)$('SSA_Name').value='';if(!bc){['District_Name','District_Code','Sub_District_Name','Sub_District_Code','Village_Name','Village_Code'].forEach(k=>$(k).value='');}else populateDistricts();}
-function uniqueBy(arr,key){let m=new Map();(arr||[]).forEach(x=>{let v=String(x[key]||'');if(v&&!m.has(v))m.set(v,x);});return [...m.values()];}
+function toggleSSA(){let t=$('Location_Type').value,y=t==='SSA',bc=t==='BC LOCATION';$('ssaField').classList.toggle('hidden',!y);$('lgdFields').classList.toggle('hidden',!bc);if(!y)$('SSA_Name').value='';if(!bc){['District_Name','District_Code','Sub_District_Name','Sub_District_Code','Village_Name','Village_Code'].forEach(k=>$(k).value='');}else popufunction normKey(v){return String(v==null?'':v).toLowerCase().replace(/[^a-z0-9]/g,'');}
+function normalizeLGDRows(rows){
+  return (rows||[]).map(r=>{
+    const o={}; Object.keys(r||{}).forEach(k=>o[normKey(k)]=r[k]);
+    return {
+      District_Name:String(o.districtname??o.district??'').trim(),
+      District_Code:String(o.districtcode??'').trim(),
+      Sub_District_Name:String(o.subdistrictname??o.subdistrict??'').trim(),
+      Sub_District_Code:String(o.subdistrictcode??'').trim(),
+      Village_Name:String(o.villagename??o.village??'').trim(),
+      Village_Code:String(o.villagecode??'').trim()
+    };
+  }).filter(r=>r.District_Name && r.District_Code && r.Sub_District_Name && r.Sub_District_Code && r.Village_Name && r.Village_Code);
+}
+function lgdRows(){return normalizeLGDRows(initData?.lgd||[]);}
+function uniqueBy(arr,key){let m=new Map();(arr||[]).forEach(x=>{let v=String(x[key]||'').trim();if(v&&!m.has(v))m.set(v,x);});return [...m.values()];}
 function fillSelect(id,items,placeholder){$(id).innerHTML='<option value="">'+placeholder+'</option>'+items.map(x=>`<option value="${esc(x.name)}">${esc(x.name)}</option>`).join('');}
-function populateDistricts(){let a=uniqueBy(initData?.lgd||[],'District_Code').map(x=>({name:x.District_Name,code:x.District_Code}));fillSelect('District_Name',a,'-- Select District --');}
-function districtChanged(){let name=$('District_Name').value,a=(initData?.lgd||[]).filter(x=>x.District_Name===name);$('District_Code').value=a[0]?.District_Code||'';fillSelect('Sub_District_Name',uniqueBy(a,'Sub_District_Code').map(x=>({name:x.Sub_District_Name,code:x.Sub_District_Code})),'-- Select Sub-District --');$('Sub_District_Name').disabled=!name;$('Sub_District_Code').value='';fillSelect('Village_Name',[],'-- Select Village --');$('Village_Name').disabled=true;$('Village_Code').value='';}
-function subDistrictChanged(){let d=$('District_Name').value,n=$('Sub_District_Name').value,a=(initData?.lgd||[]).filter(x=>x.District_Name===d&&x.Sub_District_Name===n);$('Sub_District_Code').value=a[0]?.Sub_District_Code||'';fillSelect('Village_Name',uniqueBy(a,'Village_Code').map(x=>({name:x.Village_Name,code:x.Village_Code})),'-- Select Village --');$('Village_Name').disabled=!n;$('Village_Code').value='';}
-function villageChanged(){let a=(initData?.lgd||[]).find(x=>x.District_Name===$('District_Name').value&&x.Sub_District_Name===$('Sub_District_Name').value&&x.Village_Name===$('Village_Name').value);$('Village_Code').value=a?.Village_Code||'';}
+function populateDistricts(){
+  const rows=lgdRows();
+  const a=uniqueBy(rows,'District_Code').map(x=>({name:x.District_Name,code:x.District_Code}));
+  fillSelect('District_Name',a,'-- Select District --');
+}
+function districtChanged(){
+  const name=$('District_Name').value;
+  const rows=lgdRows();
+  const a=rows.filter(x=>x.District_Name===name);
+  $('District_Code').value=a[0]?.District_Code||'';
+  fillSelect('Sub_District_Name',uniqueBy(a,'Sub_District_Code').map(x=>({name:x.Sub_District_Name,code:x.Sub_District_Code})),'-- Select Sub-District --');
+  $('Sub_District_Name').disabled=!name;
+  $('Sub_District_Code').value='';
+  fillSelect('Village_Name',[],'-- Select Village --');
+  $('Village_Name').disabled=true;
+  $('Village_Code').value='';
+}
+function subDistrictChanged(){
+  const d=$('District_Name').value,n=$('Sub_District_Name').value;
+  const a=lgdRows().filter(x=>x.District_Name===d&&x.Sub_District_Name===n);
+  $('Sub_District_Code').value=a[0]?.Sub_District_Code||'';
+  fillSelect('Village_Name',uniqueBy(a,'Village_Code').map(x=>({name:x.Village_Name,code:x.Village_Code})),'-- Select Village --');
+  $('Village_Name').disabled=!n;
+  $('Village_Code').value='';
+}
+function villageChanged(){
+  const a=lgdRows().find(x=>x.District_Name===$('District_Name').value&&x.Sub_District_Name===$('Sub_District_Name').value&&x.Village_Name===$('Village_Name').value);
+  $('Village_Code').value=a?.Village_Code||'';
+}
+
+illage_Code||'';}
 function resetForm(){$('appForm').reset();$('Application_ID').value='';$('Link_Branch').value='';$('Sol_District').value='';$('formTitle').textContent='New BC Application';$('saveBtn').textContent='Save Application';showAlert('formAlert','');toggleOld();toggleSSA();calcScore();$('Sub_District_Name').disabled=true;$('Village_Name').disabled=true;}
 function calcScore(){let ks=['Score_Location','Score_Reputation','Score_Age','Score_Education','Score_Banking','Score_Computer_Literacy','Score_Present_Occupation','Score_Experience','Score_Annual_Income'];let total=ks.reduce((n,k)=>n+Number($(k)?.value||0),0);if($('Score_Total'))$('Score_Total').value=total;if($('Score_Qualifies'))$('Score_Qualifies').value=total>=18?'YES':'NO';}
 function dataForm(){let d={};formFields.forEach(k=>{if($(k))d[k]=$(k).value.trim();});d.PAN_No=(d.PAN_No||'').toUpperCase();return d;}
@@ -96,7 +137,21 @@ async function saveApp(e){e.preventDefault();$('saveBtn').disabled=true;try{let 
 async function viewApp(id){try{current=await call('getApplicationById',{Application_ID:id});renderDetails();renderWorkflow();let h=await call('getWorkflowHistory',{Application_ID:id});$('history').innerHTML=historyTable(h||[]);$('sanctionLink').innerHTML=current.HO_Sanction_Letter_URL?`<a target="_blank" href="${esc(current.HO_Sanction_Letter_URL)}">Open sanction PDF</a>`:'Not uploaded';section('detailPage');}catch(e){showAlert('alert','Unable to open application: '+e.message);}}
 function editApp(id){let r=records.find(x=>x.Application_ID===id);if(r)fillForm(r);else call('getApplicationById',{Application_ID:id}).then(fillForm).catch(e=>showAlert('alert',e.message));}
 function editCurrent(){if(current)fillForm(current);}
-function fillForm(r){resetForm();formFields.forEach(k=>{if($(k)&&r[k]!==undefined)$(k).value=r[k]||'';});branchChanged();toggleOld();toggleSSA();calcScore();$('formTitle').textContent='Edit Application — '+r.Application_ID;$('saveBtn').textContent='Update Application';section('formPage');}
+function fillForm(r){
+  resetForm();
+  formFields.forEach(k=>{if($(k)&&r[k]!==undefined&&!['District_Name','District_Code','Sub_District_Name','Sub_District_Code','Village_Name','Village_Code'].includes(k))$(k).value=r[k]||'';});
+  branchChanged();toggleOld();toggleSSA();
+  if(r.Location_Type==='BC LOCATION'){
+    populateDistricts();
+    $('District_Name').value=r.District_Name||'';
+    districtChanged();
+    $('Sub_District_Name').value=r.Sub_District_Name||'';
+    subDistrictChanged();
+    $('Village_Name').value=r.Village_Name||'';
+    villageChanged();
+  }
+  calcScore();$('formTitle').textContent='Edit Application — '+r.Application_ID;$('saveBtn').textContent='Update Application';section('formPage');
+}
 function backToList(){section('listPage');refreshData();}
 function renderDetails(){let groups={'Application & Branch':['Application_ID','Application_Date','RO_Receipt_Date','Sol_ID','Link_Branch','Sol_District','Sanc_Type','Application_Status'],'Kiosk & Location':['Kiosk_Location','Location_Type','SSA_Name','District_Name','District_Code','Sub_District_Name','Sub_District_Code','Village_Name','Village_Code','New_Corp_BCs','Old_Corp_BC','Old_BC_ID','Old_BC_Name','Old_BC_OD_ACC'],'Applicant Details':['Name_of_BCs','Gender','Education','Mobile_No','Email_ID','Aadhaar_No','PAN_No','PIN_Code','Permanent_Address','Communication_Address'],'Eligibility & Rating':['Eligibility_Qualification','Eligibility_Residence','Eligibility_Reputation','Eligibility_No_Criminal_Record','Eligibility_Due_Diligence','Score_Location','Score_Reputation','Score_Age','Score_Education','Score_Banking','Score_Computer_Literacy','Score_Present_Occupation','Score_Experience','Score_Annual_Income','Score_Total','Score_Qualifies'],'Branch / RO Recommendations':['Branch_Manager_Recommendation','Branch_Manager_Name','Branch_Manager_Date','Branch_Manager_Comments','RO_Committee_Recommendation','RO_Committee_Member1','RO_Committee_Member2','RO_Committee_Member3','RO_Committee_Date','RO_Committee_Comments','HO_Approval_Status','HO_Approval_Authority','HO_Approval_Date'],'Documents & Verification':['Application_PDF_URL','Application_PDF_Upload_Date','Document_Verification_Status','Branch_Verification','Remarks','HO_Sanction_Status','HO_Sanction_Letter_URL'],'Post-Sanction':['OD_Account_Created','OD_Account_Number','BC_ID_Created','BC_ID_Number','Terminal_Mapping_Status','Terminal_ID','Aadhaar_Mapping_Status','PAN_Mapping_Status','Final_Activation_Status','Activation_Date']};$('detailTitle').textContent='Application: '+current.Application_ID;$('details').innerHTML=Object.entries(groups).map(([title,keys])=>`<div class="full"><h3>${esc(title)}</h3></div>`+keys.map(k=>`<div class="detail"><label>${esc(k.replace(/_/g,' '))}</label><strong>${/_URL$/.test(k)&&current[k]?`<a target="_blank" href="${esc(current[k])}">Open PDF</a>`:esc(current[k])||'—'}</strong></div>`).join('')).join('');}
 const wf=[['Application_Status','Application Status',statuses],['Document_Verification_Status','Document Verification',['Pending','Verified','Deficient']],['Branch_Verification','Branch Verification',['Pending','Verified','Returned']],['HO_Sanction_Status','HO Sanction Status',['Pending','Received','Approved','Rejected']],['OD_Account_Created','OD Account Created',['NO','YES']],['OD_Account_Number','OD Account Number'],['BC_ID_Created','BC ID Created',['NO','YES']],['BC_ID_Number','BC ID Number'],['Terminal_Mapping_Status','Terminal Mapping',['Pending','Completed','Not Applicable']],['Terminal_ID','Terminal ID'],['Aadhaar_Mapping_Status','Aadhaar Mapping',['Pending','Completed','Not Applicable']],['PAN_Mapping_Status','PAN Mapping',['Pending','Completed','Not Applicable']],['Final_Activation_Status','Final Activation Status',['Pending','Active','Inactive','Rejected']],['Activation_Date','Activation Date','date'],['Remarks','Workflow Remarks','textarea']];
