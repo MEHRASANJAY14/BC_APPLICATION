@@ -16,14 +16,80 @@ main{padding:31px 29px;max-width:1900px;margin:auto}.heading{display:flex;justif
 .formbox{background:#fff;border:1px solid var(--line);border-radius:18px;padding:25px}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.field label{display:block;font-size:13px;font-weight:700;color:#4e6255;margin-bottom:7px}.field input,.field select,.field textarea{width:100%;padding:11px 12px;border:1px solid #cbdacf;border-radius:8px;background:#fff}.field textarea{min-height:78px}.full{grid-column:1/-1}.section{font-size:17px;border-bottom:1px solid var(--line);padding:15px 0 8px;margin:10px 0}.actions{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap}.details{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;padding:22px}.detail{border-bottom:1px solid #e6eee8;padding:8px 0;overflow-wrap:anywhere}.detail label{display:block;font-size:12px;color:var(--muted);margin-bottom:5px}.detail strong{font-weight:600}
 @media(max-width:1000px){.stats{grid-template-columns:repeat(2,1fr)}.grid,.details{grid-template-columns:repeat(2,minmax(0,1fr))}.filters{grid-template-columns:1fr 1fr}.filters button{grid-column:1/-1}}
 @media(max-width:650px){header{padding:20px;flex-direction:column;align-items:flex-start}header h1{font-size:24px}header .btn{width:100%}main{padding:20px 12px}.heading h2{font-size:28px}.heading p{font-size:15px}.heading>.btn{width:100%}.stats{gap:10px}.stat{padding:17px;min-height:110px}.stat span{font-size:14px;margin-bottom:14px}.stat b{font-size:32px}.panelhead{padding:18px}.panelhead h3{font-size:20px}.panelhead p{font-size:14px}.filters{grid-template-columns:1fr;padding:14px}.filters input,.filters select{height:52px;font-size:15px}.grid,.details{grid-template-columns:1fr}.full{grid-column:auto}}
+
+/* Mobile-first usability improvements */
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{line-height:1.45}
+button,.btn{min-height:44px;touch-action:manipulation}
+input,select,textarea{min-height:44px;font-size:16px;max-width:100%}
+.field label{font-size:14px;line-height:1.35}
+.section{font-weight:800;color:var(--g);font-size:18px;padding-top:18px}
+.heading>div:last-child{display:flex;gap:10px;flex-wrap:wrap}
+#newBtn{order:-1}
+.tablewrap:before{content:'Tip: On a phone, swipe left/right to see all columns.';display:block;padding:10px 14px;color:var(--muted);font-size:13px;background:#f8fbf9;border-bottom:1px solid var(--line)}
+.tablewrap table{font-size:14px}
+.formbox{min-width:0}
+.field input:focus,.field select:focus,.field textarea:focus,.filters input:focus,.filters select:focus{outline:3px solid #b6dfc5;border-color:var(--g)}
+@media(max-width:650px){
+  header{padding:16px;gap:12px}
+  header h1{font-size:21px;line-height:1.25}
+  header p{font-size:14px;line-height:1.4}
+  header .btn{width:100%;padding:12px}
+  main{padding:14px 10px}
+  .heading{align-items:stretch;gap:12px;margin-bottom:16px}
+  .heading h2{font-size:25px;line-height:1.2}
+  .heading p{font-size:14px;line-height:1.4}
+  .heading>div{width:100%}
+  .heading>div:last-child{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .heading>div:last-child .btn{width:100%;padding:11px 8px;font-size:14px}
+  #newBtn{grid-column:1/-1;order:-1}
+  .stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-bottom:14px}
+  .stat{padding:13px;min-height:94px;border-radius:12px}
+  .stat span{font-size:12px;line-height:1.3;margin-bottom:8px}
+  .stat b{font-size:27px}
+  .panel,.formbox{border-radius:12px}
+  .panelhead{padding:14px;align-items:flex-start;flex-wrap:wrap}
+  .panelhead h3{font-size:18px;line-height:1.3}
+  .panelhead p{font-size:13px;line-height:1.4}
+  .count{font-size:13px}
+  .filters{grid-template-columns:minmax(0,1fr);gap:9px;padding:12px}
+  .filters input,.filters select{height:auto;min-height:48px;padding:10px 12px;font-size:16px}
+  .filters button{grid-column:auto;width:100%}
+  .formbox{padding:13px}
+  .formbox>.panelhead{gap:10px}
+  .formbox>.panelhead>div{width:100%}
+  .formbox>.panelhead button{width:100%}
+  .grid,.details{grid-template-columns:minmax(0,1fr);gap:12px}
+  .field input,.field select,.field textarea{padding:12px;font-size:16px;border-radius:9px}
+  .field textarea{min-height:90px}
+  .section{font-size:16px;margin-top:8px}
+  .actions{display:grid;grid-template-columns:1fr;gap:8px;position:sticky;bottom:0;background:#fff;padding:10px 0 calc(10px + env(safe-area-inset-bottom));z-index:5;border-top:1px solid var(--line)}
+  .actions .btn{width:100%;padding:13px}
+  #detailPage .panelhead>div:last-child{display:grid;grid-template-columns:1fr;gap:8px;width:100%}
+  #detailPage .panelhead>div:last-child .btn{width:100%;margin:0}
+  #detailPage .details{padding:14px}
+  #detailPage [style*="padding:22px"]{padding:14px!important}
+  .alert{font-size:14px;padding:12px;margin-bottom:12px;overflow-wrap:anywhere}
+  .tablewrap{max-width:calc(100vw - 22px)}
+  table{min-width:1000px}
+}
+@media(min-width:651px) and (max-width:900px){
+  main{padding:20px 16px}
+  .heading h2{font-size:30px}
+  .grid,.details{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+  .filters{grid-template-columns:1fr 1fr}
+  .filters button{grid-column:1/-1}
+}
+
 </style></head><body>
 <header><div><h1>MPGB | BC Appointment Portal</h1><p>Regional Office Jabalpur · BC Application Management</p></div><button class="btn light" onclick="refreshData()">↻ Refresh Data</button></header>
-<main><div class="heading"><div><h2 id="pageTitle">All Applications</h2><p id="subtitle">Search, track and view complete BC application records.</p></div><div><button class="btn primary" id="refreshBtn" onclick="refreshData()">Refresh Applications</button><button class="btn primary" id="newBtn" onclick="newApplication()">+ New Application</button></div></div>
+<main><div class="heading"><div><h2 id="pageTitle">All Applications</h2><p id="subtitle">Search applications, check status, or add a new BC application.</p></div><div><button class="btn primary" id="refreshBtn" onclick="refreshData()">Refresh Applications</button><button class="btn primary" id="newBtn" onclick="newApplication()">+ New Application</button></div></div>
 <div id="alert" class="alert"></div>
 <section id="listPage"><div class="stats"><div class="stat"><span>Total Applications</span><b id="total">0</b></div><div class="stat"><span>Pending / Under Review</span><b id="pending">0</b></div><div class="stat"><span>Approved</span><b id="approved">0</b></div><div class="stat"><span>Active BCs</span><b id="active">0</b></div></div>
-<div class="panel"><div class="panelhead"><div><h3>Application Register</h3><p>Select View to open the complete application in full-page mode.</p></div><div class="count" id="count">0 records</div></div>
-<div class="filters"><input id="search" placeholder="Search Application ID, SOL ID, BC name, district, BC ID..." oninput="renderTable()"><select id="status" onchange="renderTable()"><option value="">All Application Statuses</option><option>Application Received</option><option>Under Review</option><option>Documents Pending</option><option>Sent to HO</option><option>Approval Pending</option><option>Approved</option><option>Rejected</option><option>Sanction Received</option><option>Active</option></select><button class="btn soft" onclick="clearFilters()">Clear Filters</button></div><div class="tablewrap" id="table"><div class="empty">Loading applications…</div></div></div></section>
-<section id="formPage" class="hidden"><div class="formbox"><div class="panelhead" style="padding:0 0 18px;margin-bottom:15px"><div><h3 id="formTitle">New BC Application</h3><p>Enter applicant details and branch information.</p></div><button class="btn soft" onclick="backToList()">← Back to Applications</button></div><div id="formAlert" class="alert"></div>
+<div class="panel"><div class="panelhead"><div><h3>Application Register</h3><p>Tap View to see an application, or tap + New Application to add one.</p></div><div class="count" id="count">0 records</div></div>
+<div class="filters"><input id="search" placeholder="Search by application ID, branch, applicant name, or BC ID..." oninput="renderTable()"><select id="status" onchange="renderTable()"><option value="">All Application Statuses</option><option>Application Received</option><option>Under Review</option><option>Documents Pending</option><option>Sent to HO</option><option>Approval Pending</option><option>Approved</option><option>Rejected</option><option>Sanction Received</option><option>Active</option></select><button class="btn soft" onclick="clearFilters()">Clear Filters</button></div><div class="tablewrap" id="table"><div class="empty">Loading applications…</div></div></div></section>
+<section id="formPage" class="hidden"><div class="formbox"><div class="panelhead" style="padding:0 0 18px;margin-bottom:15px"><div><h3 id="formTitle">New BC Application</h3><p>Fill in the details below. Fields marked * are required.</p></div><button class="btn soft" onclick="backToList()">← Back to Applications</button></div><div id="formAlert" class="alert"></div>
 <form id="appForm" onsubmit="saveApp(event)"><input type="hidden" id="Application_ID">
 <div class="section">1. Application & Branch Details</div><div class="grid">
 <div class="field"><label>RO Receipt Date *</label><input id="RO_Receipt_Date" type="date" required></div><div class="field"><label>SOL ID / Branch *</label><select id="Sol_ID" required onchange="branchChanged()"><option value="">-- Select Branch --</option></select></div><div class="field"><label>Link Branch</label><input id="Link_Branch" readonly></div><div class="field"><label>District</label><input id="Sol_District" readonly></div><div class="field"><label>Sanction Type *</label><select id="Sanc_Type" required onchange="toggleOld()"><option value="">-- Select --</option><option>NEW</option><option>REPLACEMENT</option></select></div><div class="field"><label>New Corporate BC</label><input id="New_Corp_BCs"></div><div class="field"><label>Location Type *</label><select id="Location_Type" required onchange="toggleSSA()"><option value="">-- Select --</option><option>SSA</option><option>NON-SSA</option><option>BC LOCATION</option></select></div><div class="field"><label>Kiosk Location *</label><input id="Kiosk_Location" required></div><div class="field" id="ssaField"><label>SSA Name</label><input id="SSA_Name"></div><div id="lgdFields" class="full hidden"><div class="section">BC Location — LGD Master</div><div class="grid"><div class="field"><label>District Name *</label><select id="District_Name" onchange="districtChanged()"><option value="">-- Select District --</option></select></div><div class="field"><label>District Code</label><input id="District_Code" readonly></div><div class="field"><label>Sub-District Name *</label><select id="Sub_District_Name" onchange="subDistrictChanged()" disabled><option value="">-- Select Sub-District --</option></select></div><div class="field"><label>Sub-District Code</label><input id="Sub_District_Code" readonly></div><div class="field"><label>Village Name *</label><select id="Village_Name" onchange="villageChanged()" disabled><option value="">-- Select Village --</option></select></div><div class="field"><label>Village Code</label><input id="Village_Code" readonly></div></div></div></div>
@@ -77,7 +143,7 @@ function renderBranches(){ $('Sol_ID').innerHTML='<option value="">-- Select Bra
 async function refreshData(){try{showAlert('alert','');let [a,s]=await Promise.all([call('getApplications',{}),call('getDashboardStats',{})]);records=Array.isArray(a)?a:(a.applications||[]);$('total').textContent=s.total??records.length;$('pending').textContent=s.pending??0;$('approved').textContent=s.approved??0;$('active').textContent=s.active??0;renderTable();}catch(e){showAlert('alert','Unable to load applications: '+e.message+'. Please check API_URL, Apps Script API actions and deployment permissions.');renderTable();}}
 function renderTable(){let q=($('search').value||'').toLowerCase(),st=$('status').value;let a=records.filter(r=>(!st||r.Application_Status===st)&&(!q||['Application_ID','Sol_ID','Link_Branch','Name_of_BCs','Sol_District','BC_ID_Number'].some(k=>String(r[k]||'').toLowerCase().includes(q))));$('count').textContent=a.length+' records';if(!a.length){$('table').innerHTML='<div class="empty">No applications found.</div>';return;}$('table').innerHTML='<table><thead><tr><th>Application ID</th><th>Application Date</th><th>SOL ID</th><th>Link Branch</th><th>Applicant / BC Name</th><th>District</th><th>Application Status</th><th>HO Sanction</th><th>BC ID</th><th>Action</th></tr></thead><tbody>'+a.map(r=>`<tr><td>${esc(r.Application_ID)}</td><td>${esc(r.Application_Date||r.RO_Receipt_Date)}</td><td>${esc(r.Sol_ID)}</td><td>${esc(r.Link_Branch)}</td><td>${esc(r.Name_of_BCs)}</td><td>${esc(r.Sol_District)}</td><td><span class="pill">${esc(r.Application_Status||'Application Received')}</span></td><td>${esc(r.HO_Sanction_Status||'Pending')}</td><td>${esc(r.BC_ID_Number||'—')}</td><td><button class="action" onclick="viewApp('${esc(r.Application_ID)}')">View</button><button class="action" onclick="editApp('${esc(r.Application_ID)}')">Edit</button></td></tr>`).join('')+'</tbody></table>';}
 function clearFilters(){$('search').value='';$('status').value='';renderTable();}
-function section(which){['listPage','formPage','detailPage'].forEach(id=>$(id).classList.toggle('hidden',id!==which));let list=which==='listPage';$('refreshBtn').classList.toggle('hidden',!list);$('newBtn').classList.toggle('hidden',!list);$('pageTitle').textContent=list?'All Applications':which==='formPage'?'BC Application Form':'Application Details';$('subtitle').textContent=list?'Search, track and view complete BC application records.':which==='formPage'?'Create or update a BC appointment application.':'View complete application and workflow information.';}
+function section(which){['listPage','formPage','detailPage'].forEach(id=>$(id).classList.toggle('hidden',id!==which));let list=which==='listPage';$('refreshBtn').classList.toggle('hidden',!list);$('newBtn').classList.toggle('hidden',!list);$('pageTitle').textContent=list?'All Applications':which==='formPage'?'BC Application Form':'Application Details';$('subtitle').textContent=list?'Search applications, check status, or add a new BC application.':which==='formPage'?'Create or update a BC appointment application.':'View complete application and workflow information.';}
 function newApplication(){resetForm();$('RO_Receipt_Date').value=new Date().toISOString().slice(0,10);section('formPage');}
 function branchChanged(){let b=(initData.branches||[]).find(x=>x.Sol_ID===$('Sol_ID').value);$('Link_Branch').value=b?b.Link_Branch:'';$('Sol_District').value=b?b.Sol_District:'';}
 function toggleOld(){let y=$('Sanc_Type').value==='REPLACEMENT';$('oldFields').classList.toggle('hidden',!y);if(!y)['Old_Corp_BC','Old_BC_ID','Old_BC_Name','Old_BC_OD_ACC'].forEach(k=>$(k).value='');}
