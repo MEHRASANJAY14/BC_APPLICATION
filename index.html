@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>MPGB | BC Appointment Portal</title>
+<title>BC Appointment Portal</title>
 <style>
 :root{--g:#006633;--bg:#f3f7f4;--line:#d9e5dd;--muted:#63776a;--ink:#172d22}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:Arial,Helvetica,sans-serif;color:var(--ink)}
@@ -109,8 +109,37 @@ input,select,textarea { max-width:100%; }
 main{padding-top:27px}.heading{background:linear-gradient(115deg,#fff,#f6fbf7);padding:23px 25px;border:1px solid var(--line);border-radius:18px;margin-bottom:22px}.heading h2{font-size:30px;letter-spacing:-.5px}.heading p{font-size:15px}.stats .stat{position:relative;overflow:hidden;transition:transform .18s,box-shadow .18s}.stats .stat:hover{transform:translateY(-2px);box-shadow:0 10px 25px #12331b12}.stats .stat:after{content:"";position:absolute;right:-25px;bottom:-38px;width:110px;height:110px;border-radius:50%;background:#00663308}.stats .stat b{color:#075b30}.panelhead{background:linear-gradient(90deg,#fff,#f9fcfa)}#newBtn{box-shadow:0 5px 12px #00663322}
 @media(max-width:700px){.portal-header{padding:17px 14px;gap:11px;flex-wrap:wrap}.brand-mark{width:47px;height:47px;border-radius:13px;font-size:14px}.brand-copy{min-width:calc(100% - 65px)}.brand-copy h1{font-size:21px}.brand-copy p{font-size:12px}.header-actions{width:100%;justify-content:space-between}.connection-chip{font-size:11px;padding:9px 10px}.header-actions .btn{padding:10px 12px}.heading{padding:17px 14px}.heading h2{font-size:25px}}
 
+
+:root{--sidebar-width:264px}
+.left-sidebar{position:fixed;inset:0 auto 0 0;width:var(--sidebar-width);background:#fff;border-right:1px solid #dce7df;padding:22px 15px;display:flex;flex-direction:column;z-index:100;box-shadow:4px 0 22px #193c2410}
+.side-title{display:flex;align-items:center;gap:11px;padding:5px 7px 26px;border-bottom:1px solid #e8efe9}
+.side-symbol{width:44px;height:44px;display:grid;place-items:center;background:#006633;color:white;border-radius:13px;font-weight:900;font-size:16px}
+.side-title strong{display:block;font-size:15px;color:#183b27;line-height:1.3}.side-title small{display:block;color:#7a8b7f;font-size:11px;margin-top:4px}
+.side-caption{font-size:10px;letter-spacing:1.4px;color:#8b9b90;font-weight:800;padding:22px 11px 9px}
+.side-link{display:flex;align-items:center;gap:13px;width:100%;border:0;background:transparent;color:#506458;text-align:left;padding:13px 12px;border-radius:10px;font-size:14px;font-weight:650;cursor:pointer;margin:2px 0;min-height:45px}
+.side-link>span:first-child{width:22px;text-align:center;font-size:18px;color:#648071}.side-link:hover{background:#f0f7f2;color:#006633}.side-link.active{background:#e8f5ec;color:#006633;font-weight:800}.side-link.active>span:first-child{color:#006633}
+.side-divider{height:1px;background:#e8efe9;margin:13px 7px 0}.side-spacer{flex:1}.side-status{display:flex;align-items:center;gap:10px;background:#f6faf7;border:1px solid #e2eee5;border-radius:11px;padding:12px;margin:12px 0}.status-light{width:9px;height:9px;border-radius:50%;background:#e4b33f;flex-shrink:0}.side-status strong{display:block;font-size:12px;color:#345541}.side-status small{display:block;font-size:10px;color:#829188;margin-top:3px}.side-footer{font-size:10px;color:#9aa79e;text-align:center;padding:10px 0 0}
+body{padding-left:var(--sidebar-width)}main{max-width:none;margin:0;padding:32px 30px}
+.mobile-menu{display:none;position:fixed;top:12px;left:12px;z-index:120;background:#006633;color:white;border:0;border-radius:9px;padding:9px 12px;box-shadow:0 3px 12px #12331b20}
+@media(max-width:800px){:root{--sidebar-width:264px}.left-sidebar{transform:translateX(-105%);transition:transform .2s ease}.sidebar-open .left-sidebar{transform:translateX(0)}.mobile-menu{display:block}body{padding-left:0}main{padding:70px 14px 20px}.heading{padding-top:5px}.heading h2{font-size:27px}.heading>div:last-child{display:flex;flex-wrap:wrap}.heading>div:last-child .btn{flex:1}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
 </style></head><body>
-<header class="portal-header"><div class="brand-mark">MPGB</div><div class="brand-copy"><h1>BC Appointment Portal</h1><p>Regional Office Jabalpur <span class="header-dot">•</span> Business Correspondent Application Management</p></div><div class="header-actions"><span class="connection-chip" id="connectionChip"><i></i> Connecting to portal…</span><button class="btn light" onclick="refreshData()">↻ Refresh Data</button></div></header>
+<aside class="left-sidebar">
+  <div class="side-title"><div class="side-symbol">BC</div><div><strong>Appointment Portal</strong><small>Regional Office Jabalpur</small></div></div>
+  <div class="side-caption">WORKSPACE</div>
+  <button class="side-link active" onclick="showHome()" id="navHome"><span>▦</span><span>Dashboard</span></button>
+  <button class="side-link" onclick="newApplication()"><span>＋</span><span>New Application</span></button>
+  <button class="side-link" onclick="showHome()"><span>▤</span><span>All Applications</span></button>
+  <div class="side-divider"></div>
+  <div class="side-caption">PORTAL</div>
+  <button class="side-link" onclick="refreshData()"><span>↻</span><span>Refresh Data</span></button>
+  <div class="side-spacer"></div>
+  <div class="side-status"><span class="status-light"></span><div><strong id="sideConnectionText">Connecting…</strong><small>Application database</small></div></div>
+  <div class="side-footer">BC Application Management</div>
+</aside>
+<button class="mobile-menu" onclick="document.body.classList.toggle('sidebar-open')" aria-label="Toggle navigation">☰</button>
+
+
 <main><div class="heading"><div><h2 id="pageTitle">All Applications</h2><p id="subtitle">Search applications, check status, or add a new BC application.</p></div><div><button class="btn primary" id="refreshBtn" onclick="refreshData()">Refresh Applications</button><button class="btn primary" id="newBtn" onclick="newApplication()">+ New Application</button></div></div>
 <div id="alert" class="alert"></div>
 <section id="listPage"><div class="stats"><div class="stat"><span>Total Applications</span><b id="total">0</b></div><div class="stat"><span>Pending / Under Review</span><b id="pending">0</b></div><div class="stat"><span>Approved</span><b id="approved">0</b></div><div class="stat"><span>Active BCs</span><b id="active">0</b></div></div>
@@ -212,12 +241,13 @@ function call(action,payload={}){
       .apiAction(action,payload);
   });
 }
-async function boot(){
+async function showHome(){document.body.classList.remove('sidebar-open');document.getElementById('listPage').classList.remove('hidden');document.getElementById('formPage')?.classList.add('hidden');document.getElementById('detailPage')?.classList.add('hidden');document.getElementById('pageTitle').textContent='All Applications';document.getElementById('subtitle').textContent='Search applications, check status, or add a new BC application.';}
+function boot(){
   // Populate SOL IDs immediately from the hardcoded master, even if API/authentication fails.
   initData={branches:FALLBACK_BRANCHES.map(b=>({Sol_ID:b[0],Link_Branch:b[1],Sol_District:b[2]})),lgd:[]};
   renderBranches();
-  try{const remote=await call('getInitialData');if(remote&&Array.isArray(remote.branches)&&remote.branches.length)initData.branches=remote.branches;if(remote&&Array.isArray(remote.lgd))initData.lgd=normalizeLGDRows(remote.lgd);renderBranches();populateDistricts();updateLGDStatus();const chip=document.getElementById('connectionChip');if(chip){chip.className='connection-chip connected';chip.innerHTML='<i></i> Backend connected';}await refreshData();}
-  catch(e){populateDistricts();updateLGDStatus();const chip=document.getElementById('connectionChip');if(chip){chip.className='connection-chip failed';chip.innerHTML='<i></i> Connection needs attention';}showAlert('alert','Could not load live portal data: '+e.message+'. The backend URL is already configured. Check Apps Script deployment access and confirm the deployed Code.gs supports getInitialData and the other portal actions.');renderTable();}
+  try{const remote=await call('getInitialData');if(remote&&Array.isArray(remote.branches)&&remote.branches.length)initData.branches=remote.branches;if(remote&&Array.isArray(remote.lgd))initData.lgd=normalizeLGDRows(remote.lgd);renderBranches();populateDistricts();updateLGDStatus();const chip=document.getElementById('connectionChip');if(chip){chip.className='connection-chip connected';chip.innerHTML='<i></i> Backend connected';const side=document.getElementById('sideConnectionText');if(side)side.textContent='Backend connected';const light=document.querySelector('.status-light');if(light)light.style.background='#16a34a';}await refreshData();}
+  catch(e){populateDistricts();updateLGDStatus();const chip=document.getElementById('connectionChip');if(chip){chip.className='connection-chip failed';chip.innerHTML='<i></i> Connection needs attention';const side=document.getElementById('sideConnectionText');if(side)side.textContent='Connection needs attention';const light=document.querySelector('.status-light');if(light)light.style.background='#dc4c43';}showAlert('alert','Could not load live portal data: '+e.message+'. The backend URL is already configured. Check Apps Script deployment access and confirm the deployed Code.gs supports getInitialData and the other portal actions.');renderTable();}
 }
 function renderBranches(){ $('Sol_ID').innerHTML='<option value="">-- Select Branch --</option>'+(initData.branches||[]).map(b=>`<option value="${esc(b.Sol_ID)}">${esc(b.Sol_ID)} - ${esc(b.Link_Branch)}</option>`).join(''); }
 async function refreshData(){try{showAlert('alert','');let [a,s]=await Promise.all([call('getApplications',{}),call('getDashboardStats',{})]);records=Array.isArray(a)?a:(a.applications||[]);$('total').textContent=s.total??records.length;$('pending').textContent=s.pending??0;$('approved').textContent=s.approved??0;$('active').textContent=s.active??0;renderTable();}catch(e){showAlert('alert','Unable to load applications: '+e.message+'. Please check API_URL, Apps Script API actions and deployment permissions.');renderTable();}}
