@@ -246,7 +246,7 @@ async function boot(){
   // Populate SOL IDs immediately from the hardcoded master, even if API/authentication fails.
   initData={branches:FALLBACK_BRANCHES.map(b=>({Sol_ID:b[0],Link_Branch:b[1],Sol_District:b[2]})),lgd:[]};
   renderBranches();
-  try{const remote=await call('getInitialData');if(remote&&Array.isArray(remote.branches)&&remote.branches.length)initData.branches=remote.branches;if(remote&&Array.isArray(remote.lgd))initData.lgd=normalizeLGDRows(remote.lgd);renderBranches();populateDistricts();updateLGDStatus();const chip=document.getElementById('connectionChip');if(chip){chip.className='connection-chip connected';chip.innerHTML='<i></i> Backend connected';const side=document.getElementById('sideConnectionText');if(side)side.textContent='Backend connected';const light=document.querySelector('.status-light');if(light)light.style.background='#16a34a';}await refreshData();}
+  try{const remote=await call('getInitialData');if(remote&&Array.isArray(remote.branches)&&remote.branches.length)initData.branches=remote.branches;let locationRows=(remote&&Array.isArray(remote.lgd))?remote.lgd:null;try{const direct=await call('getLGDData');if(Array.isArray(direct))locationRows=direct;}catch(directErr){console.warn('Direct LGD read unavailable; using getInitialData result.',directErr);}if(Array.isArray(locationRows))initData.lgd=normalizeLGDRows(locationRows);renderBranches();populateDistricts();updateLGDStatus();const chip=document.getElementById('connectionChip');if(chip){chip.className='connection-chip connected';chip.innerHTML='<i></i> Backend connected';const side=document.getElementById('sideConnectionText');if(side)side.textContent='Backend connected';const light=document.querySelector('.status-light');if(light)light.style.background='#16a34a';}await refreshData();}
   catch(e){populateDistricts();updateLGDStatus();const chip=document.getElementById('connectionChip');if(chip){chip.className='connection-chip failed';chip.innerHTML='<i></i> Connection needs attention';const side=document.getElementById('sideConnectionText');if(side)side.textContent='Connection needs attention';const light=document.querySelector('.status-light');if(light)light.style.background='#dc4c43';}showAlert('alert','Could not load live portal data: '+e.message+'. The backend URL is already configured. Check Apps Script deployment access and confirm the deployed Code.gs supports getInitialData and the other portal actions.');renderTable();}
 }
 function renderBranches(){ $('Sol_ID').innerHTML='<option value="">-- Select Branch --</option>'+(initData.branches||[]).map(b=>`<option value="${esc(b.Sol_ID)}">${esc(b.Sol_ID)} - ${esc(b.Link_Branch)}</option>`).join(''); }
@@ -312,10 +312,12 @@ async function loadLGDData(){
  const el=$('lgdStatus');if(el){el.textContent='Loading LGD Master records…';el.className='lgd-status';}
  try{
    const remote=await call('getInitialData');
-   if(remote&&Array.isArray(remote.lgd))initData.lgd=normalizeLGDRows(remote.lgd);
    if(remote&&Array.isArray(remote.branches)&&remote.branches.length)initData.branches=remote.branches;
+   let locationRows=(remote&&Array.isArray(remote.lgd))?remote.lgd:null;
+   try { const direct=await call('getLGDData'); if(Array.isArray(direct))locationRows=direct; } catch(directErr) { console.warn('Direct LGD read unavailable; using getInitialData result.',directErr); }
+   if(Array.isArray(locationRows))initData.lgd=normalizeLGDRows(locationRows);
    renderBranches();populateDistricts();updateLGDStatus();
- }catch(e){updateLGDStatus('Could not load LGD Master: '+e.message+'. Configure API_URL or check Apps Script deployment/USERS access.');}
+ }catch(e){updateLGDStatus('Could not load LGD Master: '+e.message+'. Check the deployed Code.gs, spreadsheet binding, and the exact LGD MASTER tab.');}
 }
 function populateDistricts(){
   const rows=lgdRows();
