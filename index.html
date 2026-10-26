@@ -1,421 +1,134 @@
-<!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>BC Appointment Portal</title>
 <style>
-:root{--g:#006633;--bg:#f3f7f4;--line:#d9e5dd;--muted:#63776a;--ink:#172d22}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:Arial,Helvetica,sans-serif;color:var(--ink)}
-header{background:#006633;color:white;padding:25px 32px;display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap}
-header h1{font-size:31px;margin:0 0 8px;font-weight:800}header p{font-size:17px;margin:0;color:#e3f1e8}
-button,input,select,textarea{font:inherit}.btn{border:0;border-radius:10px;padding:15px 20px;font-weight:700;cursor:pointer}.primary{background:var(--g);color:#fff}.light{background:#fff;color:var(--g)}.soft{background:#e7f1eb;color:var(--g)}
-main{padding:31px 29px;max-width:1900px;margin:auto}.heading{display:flex;justify-content:space-between;align-items:center;gap:18px;margin-bottom:25px;flex-wrap:wrap}.heading h2{font-size:36px;margin:0 0 9px}.heading p{font-size:18px;color:var(--muted);margin:0}
-.alert{display:none;padding:17px 21px;border-radius:12px;margin-bottom:20px;font-size:17px;line-height:1.45}.alert.show{display:block}.alert.error{background:#fff0ef;color:#b42318}.alert.success{background:#e8f6ec;color:#075d30}
-.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px;margin-bottom:29px}.stat{background:#fff;border:1px solid var(--line);border-radius:18px;min-height:145px;padding:25px 26px;box-shadow:0 4px 14px #12331b08}.stat span{display:block;font-size:18px;color:#617568;margin-bottom:19px}.stat b{font-size:43px}
-.panel{background:#fff;border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:0 4px 14px #12331b08}.panelhead{padding:25px;display:flex;justify-content:space-between;align-items:center;gap:12px;border-bottom:1px solid var(--line)}.panelhead h3{font-size:24px;margin:0 0 7px}.panelhead p{font-size:17px;color:var(--muted);margin:0}.count{color:var(--muted);white-space:nowrap}
-.filters{display:grid;grid-template-columns:minmax(260px,2fr) minmax(230px,1fr) auto;gap:14px;padding:21px 22px;border-bottom:1px solid var(--line)}.filters input,.filters select{height:63px;min-width:0;width:100%;border:1px solid #cbdacf;border-radius:11px;padding:0 17px;background:white;font-size:18px}
-.tablewrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:1160px}thead{background:#f6f9f7}th{text-align:left;padding:19px 20px;white-space:nowrap;border-bottom:1px solid var(--line);font-size:16px;color:#415a4b}td{padding:17px 20px;border-bottom:1px solid #e9efeb;font-size:15px;white-space:nowrap}tbody tr:hover{background:#fbfdfb}.pill{display:inline-block;border-radius:30px;padding:7px 11px;background:#eaf4ed;color:#17633a;font-size:12px;font-weight:700}.action{border:1px solid #c8dacf;background:#f3f8f4;color:var(--g);border-radius:7px;padding:8px 12px;font-weight:700;cursor:pointer;margin-right:5px}.empty{padding:30px;text-align:center;color:var(--muted)}.hidden{display:none!important}
-.formbox{background:#fff;border:1px solid var(--line);border-radius:18px;padding:25px}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.field label{display:block;font-size:13px;font-weight:700;color:#4e6255;margin-bottom:7px}.field input,.field select,.field textarea{width:100%;padding:11px 12px;border:1px solid #cbdacf;border-radius:8px;background:#fff}.field textarea{min-height:78px}.full{grid-column:1/-1}.section{font-size:17px;border-bottom:1px solid var(--line);padding:15px 0 8px;margin:10px 0}.actions{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap}.details{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;padding:22px}.detail{border-bottom:1px solid #e6eee8;padding:8px 0;overflow-wrap:anywhere}.detail label{display:block;font-size:12px;color:var(--muted);margin-bottom:5px}.detail strong{font-weight:600}
-@media(max-width:1000px){.stats{grid-template-columns:repeat(2,1fr)}.grid,.details{grid-template-columns:repeat(2,minmax(0,1fr))}.filters{grid-template-columns:1fr 1fr}.filters button{grid-column:1/-1}}
-@media(max-width:650px){header{padding:20px;flex-direction:column;align-items:flex-start}header h1{font-size:24px}header .btn{width:100%}main{padding:20px 12px}.heading h2{font-size:28px}.heading p{font-size:15px}.heading>.btn{width:100%}.stats{gap:10px}.stat{padding:17px;min-height:110px}.stat span{font-size:14px;margin-bottom:14px}.stat b{font-size:32px}.panelhead{padding:18px}.panelhead h3{font-size:20px}.panelhead p{font-size:14px}.filters{grid-template-columns:1fr;padding:14px}.filters input,.filters select{height:52px;font-size:15px}.grid,.details{grid-template-columns:1fr}.full{grid-column:auto}}
-
-/* Mobile-first usability improvements */
-html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
-body{line-height:1.45}
-button,.btn{min-height:44px;touch-action:manipulation}
-input,select,textarea{min-height:44px;font-size:16px;max-width:100%}
-.field label{font-size:14px;line-height:1.35}
-.section{font-weight:800;color:var(--g);font-size:18px;padding-top:18px}
-.heading>div:last-child{display:flex;gap:10px;flex-wrap:wrap}
-#newBtn{order:-1}
-.tablewrap:before{content:'Tip: On a phone, swipe left/right to see all columns.';display:block;padding:10px 14px;color:var(--muted);font-size:13px;background:#f8fbf9;border-bottom:1px solid var(--line)}
-.tablewrap table{font-size:14px}
-.formbox{min-width:0}
-.field input:focus,.field select:focus,.field textarea:focus,.filters input:focus,.filters select:focus{outline:3px solid #b6dfc5;border-color:var(--g)}
-@media(max-width:650px){
-  header{padding:16px;gap:12px}
-  header h1{font-size:21px;line-height:1.25}
-  header p{font-size:14px;line-height:1.4}
-  header .btn{width:100%;padding:12px}
-  main{padding:14px 10px}
-  .heading{align-items:stretch;gap:12px;margin-bottom:16px}
-  .heading h2{font-size:25px;line-height:1.2}
-  .heading p{font-size:14px;line-height:1.4}
-  .heading>div{width:100%}
-  .heading>div:last-child{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-  .heading>div:last-child .btn{width:100%;padding:11px 8px;font-size:14px}
-  #newBtn{grid-column:1/-1;order:-1}
-  .stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-bottom:14px}
-  .stat{padding:13px;min-height:94px;border-radius:12px}
-  .stat span{font-size:12px;line-height:1.3;margin-bottom:8px}
-  .stat b{font-size:27px}
-  .panel,.formbox{border-radius:12px}
-  .panelhead{padding:14px;align-items:flex-start;flex-wrap:wrap}
-  .panelhead h3{font-size:18px;line-height:1.3}
-  .panelhead p{font-size:13px;line-height:1.4}
-  .count{font-size:13px}
-  .filters{grid-template-columns:minmax(0,1fr);gap:9px;padding:12px}
-  .filters input,.filters select{height:auto;min-height:48px;padding:10px 12px;font-size:16px}
-  .filters button{grid-column:auto;width:100%}
-  .formbox{padding:13px}
-  .formbox>.panelhead{gap:10px}
-  .formbox>.panelhead>div{width:100%}
-  .formbox>.panelhead button{width:100%}
-  .grid,.details{grid-template-columns:minmax(0,1fr);gap:12px}
-  .field input,.field select,.field textarea{padding:12px;font-size:16px;border-radius:9px}
-  .field textarea{min-height:90px}
-  .section{font-size:16px;margin-top:8px}
-  .actions{display:grid;grid-template-columns:1fr;gap:8px;position:sticky;bottom:0;background:#fff;padding:10px 0 calc(10px + env(safe-area-inset-bottom));z-index:5;border-top:1px solid var(--line)}
-  .actions .btn{width:100%;padding:13px}
-  #detailPage .panelhead>div:last-child{display:grid;grid-template-columns:1fr;gap:8px;width:100%}
-  #detailPage .panelhead>div:last-child .btn{width:100%;margin:0}
-  #detailPage .details{padding:14px}
-  #detailPage [style*="padding:22px"]{padding:14px!important}
-  .alert{font-size:14px;padding:12px;margin-bottom:12px;overflow-wrap:anywhere}
-  .tablewrap{max-width:calc(100vw - 22px)}
-  table{min-width:1000px}
-}
-@media(min-width:651px) and (max-width:900px){
-  main{padding:20px 16px}
-  .heading h2{font-size:30px}
-  .grid,.details{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-  .filters{grid-template-columns:1fr 1fr}
-  .filters button{grid-column:1/-1}
-}
-
-
-button, input, select, textarea { font-size:16px; }
-input,select,textarea { max-width:100%; }
-@media(max-width:650px){
-  body{font-size:15px}
-  .heading>div:last-child{display:grid;grid-template-columns:1fr;gap:8px;width:100%}
-  .heading>div:last-child .btn{width:100%;min-height:48px}
-  .btn{min-height:46px}
-  .formActions{display:flex;flex-direction:column;gap:10px}
-  .formActions .btn{width:100%}
-  .tablewrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
-  table{min-width:850px}
-  .field label{line-height:1.35}
-}
-.lgd-status{padding:12px 14px;margin:10px 0 15px;border-radius:10px;background:#f2f7f3;color:#52685a;font-size:14px;border:1px solid #dbe8df}.lgd-status.ready{background:#eaf7ef;border-color:#b8dfc5;color:#075d30}.lgd-status.error{background:#fff3f0;border-color:#ffd4cb;color:#a52a1a}.btn{transition:transform .15s ease,box-shadow .15s ease}.btn:hover{transform:translateY(-1px);box-shadow:0 5px 14px #003d1b22}header{background:linear-gradient(120deg,#004d26,#008044 65%,#14985b)}.stat{transition:transform .18s ease,box-shadow .18s ease}.stat:hover{transform:translateY(-3px);box-shadow:0 10px 25px #12331b12}.field input[readonly]{background:#f4f8f5;color:#315b40;font-weight:700}@media(max-width:650px){.lgd-status{font-size:13px;padding:10px}.btn{border-radius:9px}}
-
-.extract-card{border:1px solid #b8dfc5;background:linear-gradient(135deg,#f0fbf4,#fff 75%);border-radius:16px;padding:20px;margin:4px 0 24px}.extract-head{display:flex;justify-content:space-between;gap:16px}.extract-kicker{font-size:11px;letter-spacing:1.3px;font-weight:800;color:#008044}.extract-head h3{font-size:20px;color:#063f24;margin:7px 0}.extract-head p{margin:0;color:#617568;line-height:1.5}.extract-icon{display:grid;place-items:center;min-width:58px;height:58px;border-radius:14px;background:#006633;color:#fff;font-weight:800}.extract-controls{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:16px}.extract-controls input[type=file]{flex:1;min-width:220px;background:#fff;border:1px dashed #91c7a3;padding:10px;border-radius:9px}.extract-status{font-size:13px;color:#557363}.extract-status.good{color:#006633;font-weight:700}.extract-status.bad{color:#a52a1a;font-weight:700}.extract-review{margin-top:12px;color:#28583b;font-weight:700}.extract-review textarea{width:100%;margin-top:8px;font-family:monospace;font-size:13px}.extract-note{margin-top:12px;padding:10px 12px;background:#fff8e8;border:1px solid #f2dfaa;border-radius:9px;color:#735d20;font-size:13px}@media(max-width:650px){.extract-card{padding:14px}.extract-controls{flex-direction:column;align-items:stretch}.extract-controls .btn{width:100%}.extract-head h3{font-size:18px}}
-
-
-.portal-header{background:linear-gradient(115deg,#004d26 0%,#006633 52%,#07864b 100%);padding:24px 30px;display:flex;align-items:center;gap:16px;position:relative;overflow:hidden}
-.portal-header:after{content:"";position:absolute;width:300px;height:300px;border:1px solid #ffffff20;border-radius:50%;right:10%;top:-210px;box-shadow:0 0 0 35px #ffffff08,0 0 0 70px #ffffff05;pointer-events:none}
-.brand-mark{width:62px;height:62px;display:grid;place-items:center;background:#fff;color:#006633;border-radius:17px;font-size:17px;font-weight:900;letter-spacing:-1px;box-shadow:0 8px 22px #003b1e44;flex-shrink:0}
-.brand-copy{position:relative;z-index:1;flex:1}.brand-copy h1{font-size:29px;line-height:1.2;margin:0 0 7px}.brand-copy p{font-size:14px;margin:0;color:#e3f1e8}.header-dot{padding:0 7px;color:#bde5cc}
-.header-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;z-index:1}.connection-chip{display:inline-flex;align-items:center;gap:8px;padding:10px 13px;border:1px solid #ffffff45;border-radius:999px;color:#fff;background:#ffffff12;font-size:12px;font-weight:700;white-space:nowrap}.connection-chip i{width:8px;height:8px;border-radius:50%;background:#ffd166;display:inline-block}.connection-chip.connected i{background:#64e59a;box-shadow:0 0 0 4px #64e59a25}.connection-chip.failed i{background:#ff8b82}
-main{padding-top:27px}.heading{background:linear-gradient(115deg,#fff,#f6fbf7);padding:23px 25px;border:1px solid var(--line);border-radius:18px;margin-bottom:22px}.heading h2{font-size:30px;letter-spacing:-.5px}.heading p{font-size:15px}.stats .stat{position:relative;overflow:hidden;transition:transform .18s,box-shadow .18s}.stats .stat:hover{transform:translateY(-2px);box-shadow:0 10px 25px #12331b12}.stats .stat:after{content:"";position:absolute;right:-25px;bottom:-38px;width:110px;height:110px;border-radius:50%;background:#00663308}.stats .stat b{color:#075b30}.panelhead{background:linear-gradient(90deg,#fff,#f9fcfa)}#newBtn{box-shadow:0 5px 12px #00663322}
-@media(max-width:700px){.portal-header{padding:17px 14px;gap:11px;flex-wrap:wrap}.brand-mark{width:47px;height:47px;border-radius:13px;font-size:14px}.brand-copy{min-width:calc(100% - 65px)}.brand-copy h1{font-size:21px}.brand-copy p{font-size:12px}.header-actions{width:100%;justify-content:space-between}.connection-chip{font-size:11px;padding:9px 10px}.header-actions .btn{padding:10px 12px}.heading{padding:17px 14px}.heading h2{font-size:25px}}
-
-
-:root{--sidebar-width:264px}
-.left-sidebar{position:fixed;inset:0 auto 0 0;width:var(--sidebar-width);background:#fff;border-right:1px solid #dce7df;padding:22px 15px;display:flex;flex-direction:column;z-index:100;box-shadow:4px 0 22px #193c2410}
-.side-title{display:flex;align-items:center;gap:11px;padding:5px 7px 26px;border-bottom:1px solid #e8efe9}
-.side-symbol{width:44px;height:44px;display:grid;place-items:center;background:#006633;color:white;border-radius:13px;font-weight:900;font-size:16px}
-.side-title strong{display:block;font-size:15px;color:#183b27;line-height:1.3}.side-title small{display:block;color:#7a8b7f;font-size:11px;margin-top:4px}
-.side-caption{font-size:10px;letter-spacing:1.4px;color:#8b9b90;font-weight:800;padding:22px 11px 9px}
-.side-link{display:flex;align-items:center;gap:13px;width:100%;border:0;background:transparent;color:#506458;text-align:left;padding:13px 12px;border-radius:10px;font-size:14px;font-weight:650;cursor:pointer;margin:2px 0;min-height:45px}
-.side-link>span:first-child{width:22px;text-align:center;font-size:18px;color:#648071}.side-link:hover{background:#f0f7f2;color:#006633}.side-link.active{background:#e8f5ec;color:#006633;font-weight:800}.side-link.active>span:first-child{color:#006633}
-.side-divider{height:1px;background:#e8efe9;margin:13px 7px 0}.side-spacer{flex:1}.side-status{display:flex;align-items:center;gap:10px;background:#f6faf7;border:1px solid #e2eee5;border-radius:11px;padding:12px;margin:12px 0}.status-light{width:9px;height:9px;border-radius:50%;background:#e4b33f;flex-shrink:0}.side-status strong{display:block;font-size:12px;color:#345541}.side-status small{display:block;font-size:10px;color:#829188;margin-top:3px}.side-footer{font-size:10px;color:#9aa79e;text-align:center;padding:10px 0 0}
-body{padding-left:var(--sidebar-width)}main{max-width:none;margin:0;padding:32px 30px}
-.mobile-menu{display:none;position:fixed;top:12px;left:12px;z-index:120;background:#006633;color:white;border:0;border-radius:9px;padding:9px 12px;box-shadow:0 3px 12px #12331b20}
-@media(max-width:800px){:root{--sidebar-width:264px}.left-sidebar{transform:translateX(-105%);transition:transform .2s ease}.sidebar-open .left-sidebar{transform:translateX(0)}.mobile-menu{display:block}body{padding-left:0}main{padding:70px 14px 20px}.heading{padding-top:5px}.heading h2{font-size:27px}.heading>div:last-child{display:flex;flex-wrap:wrap}.heading>div:last-child .btn{flex:1}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
-
-</style></head><body>
-<aside class="left-sidebar">
-  <div class="side-title"><div class="side-symbol">BC</div><div><strong>Appointment Portal</strong><small>Regional Office Jabalpur</small></div></div>
-  <div class="side-caption">WORKSPACE</div>
-  <button class="side-link active" onclick="showHome()" id="navHome"><span>▦</span><span>Dashboard</span></button>
-  <button type="button" class="side-link" onclick="newApplication();return false;"><span>＋</span><span>New Application</span></button>
-  <button class="side-link" onclick="showHome()"><span>▤</span><span>All Applications</span></button>
-  <div class="side-divider"></div>
-  <div class="side-caption">PORTAL</div>
-  <button class="side-link" onclick="refreshData()"><span>↻</span><span>Refresh Data</span></button>
-  <div class="side-spacer"></div>
-  <div class="side-status"><span class="status-light"></span><div><strong id="sideConnectionText">Connecting…</strong><small>Application database</small></div></div>
-  <div class="side-footer">BC Application Management</div>
+:root{--green:#12633b;--green2:#198754;--bg:#f4f7f5;--text:#18231e;--muted:#65736b;--line:#dce5df;--white:#fff;--red:#b42318}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text)}button,input,select,textarea{font:inherit}
+.layout{display:flex;min-height:100vh}.sidebar{width:245px;background:#123d2b;color:#fff;padding:22px 14px;flex-shrink:0}.brand{font-weight:800;font-size:19px;line-height:1.35;padding:0 10px 22px;border-bottom:1px solid #ffffff30}.brand small{display:block;font-size:12px;color:#b9d6c7;font-weight:400;margin-top:4px}.nav{margin-top:20px;display:grid;gap:7px}.nav button{border:0;background:transparent;color:#e9f4ee;text-align:left;padding:12px 13px;border-radius:9px;cursor:pointer}.nav button.active,.nav button:hover{background:#246748;color:#fff}.main{flex:1;min-width:0}.topbar{background:#fff;border-bottom:1px solid var(--line);padding:17px 25px;display:flex;align-items:center;justify-content:space-between;gap:12px}.topbar h1{font-size:21px;margin:0}.userpill{background:#eaf4ed;color:#155b37;border-radius:30px;padding:8px 12px;font-size:12px}.content{padding:24px;max-width:1500px;margin:auto}.page{display:none}.page.active{display:block}.welcome{margin:0 0 18px;color:var(--muted)}.cards{display:grid;grid-template-columns:repeat(5,minmax(130px,1fr));gap:13px;margin-bottom:22px}.card,.panel{background:#fff;border:1px solid var(--line);border-radius:13px;padding:17px;box-shadow:0 2px 8px #183b2810}.card span{font-size:12px;color:var(--muted)}.card strong{display:block;font-size:27px;margin-top:9px;color:var(--green)}.panel{margin-bottom:18px}.panelhead{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:15px}.panel h2{font-size:17px;margin:0}.btn{border:0;border-radius:8px;padding:10px 14px;background:var(--green);color:#fff;cursor:pointer;font-weight:600}.btn:hover{background:#0d4e2e}.btn.secondary{background:#e9f1ec;color:#194e34}.btn.danger{background:#b42318}.btn:disabled{opacity:.6;cursor:wait}.toolbar{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:14px}.toolbar input,.toolbar select{max-width:280px}.fieldgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}.field{display:flex;flex-direction:column;gap:6px;min-width:0}.field label{font-size:12px;font-weight:700;color:#45564b}.field input,.field select,.field textarea,.toolbar input,.toolbar select{width:100%;border:1px solid #cbd8cf;border-radius:7px;padding:10px;background:#fff;min-width:0}.field textarea{min-height:72px;resize:vertical}.field.full{grid-column:1/-1}.sectiontitle{font-size:14px;font-weight:800;color:var(--green);padding:13px 0 2px;border-bottom:1px solid var(--line);grid-column:1/-1}.formactions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}.tablewrap{overflow:auto}table{border-collapse:collapse;width:100%;font-size:13px;background:#fff}th,td{padding:11px 10px;border-bottom:1px solid #e5ece7;text-align:left;white-space:nowrap}th{background:#f0f6f2;color:#355242;font-size:11px;text-transform:uppercase;letter-spacing:.3px}td .btn{padding:7px 9px;font-size:12px}.status{display:inline-block;padding:4px 8px;border-radius:20px;background:#edf4ef;color:#245b3d;font-size:11px}.muted{color:var(--muted);font-size:13px}.notice{padding:11px 13px;border-radius:8px;margin-bottom:14px;display:none;white-space:pre-wrap}.notice.ok{display:block;background:#e8f6ec;color:#155b37}.notice.err{display:block;background:#fff0ef;color:#a32218}.loading{color:var(--muted);padding:18px}.fileline{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.fileline input{max-width:360px}.small{font-size:11px;color:var(--muted)}@media(max-width:1000px){.cards{grid-template-columns:repeat(3,1fr)}.fieldgrid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:700px){.layout{display:block}.sidebar{width:auto;padding:12px}.brand{padding:4px 8px 12px}.nav{display:flex;overflow:auto;margin-top:10px}.nav button{white-space:nowrap;padding:10px}.topbar{padding:14px}.content{padding:13px}.cards{grid-template-columns:repeat(2,minmax(0,1fr))}.fieldgrid{grid-template-columns:1fr}.field.full,.sectiontitle{grid-column:1}.topbar h1{font-size:17px}}
+</style>
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar">
+  <div class="brand">BC Appointment Portal<small>Regional Office Jabalpur</small></div>
+  <nav class="nav">
+    <button class="active" data-page="dashboard">▦ Dashboard</button>
+    <button data-page="applications">▤ Applications</button>
+    <button data-page="form">＋ New Application</button>
+  </nav>
 </aside>
-<button class="mobile-menu" onclick="document.body.classList.toggle('sidebar-open')" aria-label="Toggle navigation">☰</button>
-
-
-<main><div class="heading"><div><h2 id="pageTitle">All Applications</h2><p id="subtitle">Search applications, check status, or add a new BC application.</p></div><div><button class="btn primary" id="refreshBtn" onclick="refreshData()">Refresh Applications</button><button type="button" class="btn primary" id="newBtn" onclick="newApplication();return false;">+ New Application</button></div></div>
-<div id="alert" class="alert"></div>
-<section id="listPage"><div class="stats"><div class="stat"><span>Total Applications</span><b id="total">0</b></div><div class="stat"><span>Pending / Under Review</span><b id="pending">0</b></div><div class="stat"><span>Approved</span><b id="approved">0</b></div><div class="stat"><span>Active BCs</span><b id="active">0</b></div></div>
-<div class="panel"><div class="panelhead"><div><h3>Application Register</h3><p>Tap View to see an application, or tap + New Application to add one.</p></div><div class="count" id="count">0 records</div></div>
-<div class="filters"><input id="search" placeholder="Search by application ID, branch, applicant name, or BC ID..." oninput="renderTable()"><select id="status" onchange="renderTable()"><option value="">All Application Statuses</option><option>Application Received</option><option>Under Review</option><option>Documents Pending</option><option>Sent to HO</option><option>Approval Pending</option><option>Approved</option><option>Rejected</option><option>Sanction Received</option><option>Active</option></select><button class="btn soft" onclick="clearFilters()">Clear Filters</button></div><div class="tablewrap" id="table"><div class="empty">Loading applications…</div></div></div></section>
-<section id="formPage" class="hidden"><div class="formbox"><div class="panelhead" style="padding:0 0 18px;margin-bottom:15px"><div><h3 id="formTitle">New BC Application</h3><p>Fill in the details below. Fields marked * are required.</p></div><button class="btn soft" onclick="backToList()">← Back to Applications</button></div><div id="formAlert" class="alert"></div>
-<form id="appForm" onsubmit="saveApp(event)"><input type="hidden" id="Application_ID">
-<div class="extract-card"><div class="extract-head"><div><span class="extract-kicker">SMART APPLICATION INTAKE</span><h3>Upload Application PDF — Auto-fill Details</h3><p>Upload a BC application PDF. The portal will read available text and fill matching fields. Review and edit the details before saving.</p></div><div class="extract-icon">PDF</div></div>
-<div class="extract-controls"><input type="file" id="Extract_PDF" accept="application/pdf,.pdf"><button type="button" class="btn primary" id="extractBtn" onclick="extractFromPdf()">Read PDF & Fill Form</button><span id="extractStatus" class="extract-status">PDF not processed yet</span></div>
-<details class="extract-review"><summary>View extracted text</summary><textarea id="Extracted_Text" rows="7" placeholder="Extracted text will appear here for verification."></textarea></details>
-<div class="extract-note">OCR may misread scanned text and numeric identifiers. Verify all extracted fields against the original document. All fields remain editable.</div></div>
-<div class="section">1. Application & Branch Details</div><div class="grid">
-<div class="field"><label>RO Receipt Date *</label><input id="RO_Receipt_Date" type="date" required></div><div class="field"><label>SOL ID / Branch *</label><select id="Sol_ID" required onchange="branchChanged()"><option value="">-- Select Branch --</option></select></div><div class="field"><label>Link Branch</label><input id="Link_Branch" readonly></div><div class="field"><label>District</label><input id="Sol_District" readonly></div><div class="field"><label>Sanction Type *</label><select id="Sanc_Type" required onchange="toggleOld()"><option value="">-- Select --</option><option>NEW</option><option>REPLACEMENT</option></select></div><div class="field"><label>New Corporate BC</label><input id="New_Corp_BCs"></div><div class="field"><label>Location Type *</label><select id="Location_Type" required onchange="toggleSSA()"><option value="">-- Select --</option><option>SSA</option><option>NON-SSA</option><option>BC LOCATION</option></select></div><div class="field"><label>Kiosk Location *</label><input id="Kiosk_Location" required></div><div class="field" id="ssaField"><label>SSA Name</label><input id="SSA_Name"></div><div id="lgdFields" class="full hidden"><div class="section">📍 BC Location — Select District → Sub-District → Village</div><div id="lgdStatus" class="lgd-status">Loading LGD Master records…</div><div class="grid"><div class="field"><label>District Name *</label><select id="District_Name" onchange="districtChanged()"><option value="">-- Select District --</option></select></div><div class="field"><label>District Code</label><input id="District_Code" readonly></div><div class="field"><label>Sub-District Name *</label><select id="Sub_District_Name" onchange="subDistrictChanged()" disabled><option value="">-- Select Sub-District --</option></select></div><div class="field"><label>Sub-District Code</label><input id="Sub_District_Code" readonly></div><div class="field"><label>Village Name *</label><select id="Village_Name" onchange="villageChanged()" disabled><option value="">-- Select Village --</option></select></div><div class="field"><label>Village Code</label><input id="Village_Code" readonly></div><div class="field"><label>SSA / NSSA</label><input id="SSA_NSSA" readonly placeholder="Auto-filled from LGD Master"></div></div></div></div>
-<div id="oldFields" class="hidden"><div class="section">Replacement — Existing BC Details</div><div class="grid"><div class="field"><label>Old Corporate BC</label><input id="Old_Corp_BC"></div><div class="field"><label>Old BC ID</label><input id="Old_BC_ID"></div><div class="field"><label>Old BC Name</label><input id="Old_BC_Name"></div><div class="field"><label>Old BC OD Account</label><input id="Old_BC_OD_ACC"></div></div></div>
-<div class="section">2. Applicant Details</div><div class="grid"><div class="field"><label>Name of BC Applicant *</label><input id="Name_of_BCs" required></div><div class="field"><label>Gender *</label><select id="Gender" required><option value="">-- Select --</option><option>Male</option><option>Female</option><option>Other</option></select></div><div class="field"><label>Education</label><input id="Education"></div><div class="field"><label>Mobile Number *</label><input id="Mobile_No" maxlength="10" pattern="[0-9]{10}" required></div><div class="field"><label>Email</label><input id="Email_ID" type="email"></div><div class="field"><label>PIN Code *</label><input id="PIN_Code" maxlength="6" pattern="[0-9]{6}" required></div><div class="field"><label>Aadhaar Number *</label><input id="Aadhaar_No" maxlength="12" pattern="[0-9]{12}" required autocomplete="off"></div><div class="field"><label>PAN Number *</label><input id="PAN_No" maxlength="10" pattern="[A-Za-z]{5}[0-9]{4}[A-Za-z]" required style="text-transform:uppercase"></div><div class="field"><label>Permanent Address</label><textarea id="Permanent_Address"></textarea></div><div class="field"><label>Communication Address</label><textarea id="Communication_Address"></textarea></div></div>
-<div class="section">3. Policy Eligibility Checklist</div><div class="grid">
-<div class="field"><label>Minimum qualification: Class 12th or equivalent *</label><select id="Eligibility_Qualification"><option value="">-- Verify --</option><option>YES</option><option>NO</option></select></div>
-<div class="field"><label>Residence / local knowledge verified *</label><select id="Eligibility_Residence"><option value="">-- Verify --</option><option>YES</option><option>NO</option></select></div>
-<div class="field"><label>Reputation / references satisfactory *</label><select id="Eligibility_Reputation"><option value="">-- Verify --</option><option>YES</option><option>NO</option></select></div>
-<div class="field"><label>No criminal record confirmed *</label><select id="Eligibility_No_Criminal_Record"><option value="">-- Verify --</option><option>YES</option><option>NO</option></select></div>
-<div class="field"><label>Due diligence completed *</label><select id="Eligibility_Due_Diligence"><option value="">-- Verify --</option><option>YES</option><option>NO</option></select></div>
-</div>
-<div class="section">4. Individual BC Rating Model (Policy Annexure IV)</div><p class="muted">Enter marks based on documentary verification. Maximum 30 marks; the policy's minimum qualifying score is 18/30. Final selection remains subject to the policy approval process.</p><div class="grid">
-<div class="field"><label>Location / Residency (max 5)</label><select id="Score_Location" onchange="calcScore()"><option value="0">Select verified criterion</option><option value="5">Permanent resident — 5</option><option value="3">Resident for 5 years — 3</option><option value="1">Resident for less than 5 years — 1</option></select></div>
-<div class="field"><label>Reputation in locality (max 5)</label><select id="Score_Reputation" onchange="calcScore()"><option value="0">Select verified criterion</option><option value="5">Excellent reputation — 5</option><option value="3">Good reputation — 3</option><option value="2">Satisfactory reputation — 2</option></select></div>
-<div class="field"><label>Age (max 3)</label><select id="Score_Age" onchange="calcScore()"><option value="0">Select verified criterion</option><option value="2">Age 35–40 years — 2</option><option value="3">Above 40 up to 45 years — 3</option><option value="1">Above 45 years, good health — 1</option></select></div>
-<div class="field"><label>Education (max 3)</label><select id="Score_Education" onchange="calcScore()"><option value="0">Select qualification</option><option value="3">Graduate and above — 3</option><option value="2">Class XII pass — 2</option><option value="1">Class X pass — 1</option><option value="0">Below Class X — 0</option></select></div>
-<div class="field"><label>Banking relationship (max 3)</label><select id="Score_Banking" onchange="calcScore()"><option value="0">Select bank relationship</option><option value="3">MPGB — 3</option><option value="2">Other bank — 2</option><option value="1">Co-operative bank / RRB — 1</option><option value="0">No banking relationship — 0</option></select></div>
-<div class="field"><label>Computer literacy (max 2)</label><select id="Score_Computer_Literacy" onchange="calcScore()"><option value="0">No / 0</option><option value="2">Yes / 2</option></select></div>
-<div class="field"><label>Present occupation (max 4)</label><select id="Score_Present_Occupation" onchange="calcScore()"><option value="0">Select occupation</option><option value="4">Small savings / insurance agent or similar — 4</option><option value="3">Retired bank employee / teacher / serviceman — 3</option><option value="2">Rural kiosk / medical shop / fair-price shop / similar — 2</option><option value="0">Other / no applicable experience — 0</option></select></div>
-<div class="field"><label>Experience in occupation (max 3)</label><select id="Score_Experience" onchange="calcScore()"><option value="0">No experience / 0</option><option value="2">Up to 2 years / 2</option><option value="3">More than 2 years / 3</option></select></div>
-<div class="field"><label>Annual income (max 2)</label><select id="Score_Annual_Income" onchange="calcScore()"><option value="0">Below ₹30,000 / 0</option><option value="1">₹30,000–₹50,000 / 1</option><option value="2">Above ₹50,000 / 2</option></select></div>
-<div class="field"><label>Total Score / 30</label><input id="Score_Total" readonly value="0"></div><div class="field"><label>Qualifying Score (18/30)</label><input id="Score_Qualifies" readonly value="NO"></div>
-</div>
-<div class="section">5. Branch Manager Recommendation</div><div class="grid"><div class="field"><label>Recommendation</label><select id="Branch_Manager_Recommendation"><option value="">-- Select --</option><option>Recommended</option><option>Not Recommended</option><option>Returned for Clarification</option></select></div><div class="field"><label>Branch Manager Name</label><input id="Branch_Manager_Name"></div><div class="field"><label>Recommendation Date</label><input id="Branch_Manager_Date" type="date"></div><div class="field full"><label>Comments and verification observations</label><textarea id="Branch_Manager_Comments"></textarea></div></div>
-<div class="section">6. Regional Office / Selection Committee</div><div class="grid"><div class="field"><label>Committee Recommendation</label><select id="RO_Committee_Recommendation"><option value="">-- Select --</option><option>Recommended</option><option>Not Recommended</option><option>Deferred</option></select></div><div class="field"><label>Committee Member 1</label><input id="RO_Committee_Member1"></div><div class="field"><label>Committee Member 2</label><input id="RO_Committee_Member2"></div><div class="field"><label>Committee Member 3</label><input id="RO_Committee_Member3"></div><div class="field"><label>Committee Date</label><input id="RO_Committee_Date" type="date"></div><div class="field"><label>HO Approval Status</label><select id="HO_Approval_Status"><option>Pending</option><option>Approved</option><option>Rejected</option></select></div><div class="field"><label>Approving Authority</label><input id="HO_Approval_Authority"></div><div class="field"><label>HO Approval Date</label><input id="HO_Approval_Date" type="date"></div><div class="field full"><label>RO Committee Comments</label><textarea id="RO_Committee_Comments"></textarea></div></div>
-<div class="section">7. Documents & Verification</div><div class="grid"><div class="field"><label>Application PDF (max 10 MB)</label><input type="file" id="Application_PDF" accept="application/pdf,.pdf"></div><div class="field"><label>Document Verification</label><select id="Document_Verification_Status"><option>Pending</option><option>Verified</option><option>Deficient</option></select></div><div class="field"><label>Branch Verification</label><select id="Branch_Verification"><option>Pending</option><option>Verified</option><option>Returned</option></select></div><div class="field full"><label>Remarks</label><textarea id="Remarks"></textarea></div></div><div class="actions"><button id="saveBtn" class="btn primary">Save Application</button><button type="button" class="btn soft" onclick="resetForm()">Clear Form</button></div></form></div></section>
-<section id="detailPage" class="hidden"><div class="panel"><div class="panelhead"><div><h3 id="detailTitle">Application Details</h3><p>Complete application record and documents.</p></div><div><button class="btn soft" onclick="backToList()">← Back</button> <button class="btn primary" onclick="editCurrent()">Edit Application</button></div></div><div id="details" class="details"></div></div>
-<div class="panel" style="margin-top:20px"><div class="panelhead"><div><h3>Workflow & Post-Sanction Tracking</h3><p>Approval, account creation and activation progress.</p></div></div><div id="workflow" style="padding:22px"></div></div>
-<div class="panel" style="margin-top:20px"><div class="panelhead"><div><h3>HO Sanction Letter</h3><p>Upload sanction letter received from Head Office.</p></div></div><div style="padding:22px"><div class="grid"><div class="field"><label>HO Sanction PDF (max 10 MB)</label><input type="file" id="Sanction_PDF" accept="application/pdf,.pdf"></div><div class="field"><label>Current document</label><div id="sanctionLink">Not uploaded</div></div></div><button class="btn primary" style="margin-top:15px" onclick="uploadSanction()">Upload Sanction PDF</button></div></div>
-<div class="panel" style="margin-top:20px"><div class="panelhead"><div><h3>Workflow History / Audit Trail</h3><p>Changes recorded for this application.</p></div></div><div id="history"></div></div></section>
+<main class="main">
+  <header class="topbar"><h1 id="pageTitle">Dashboard</h1><span class="userpill">Single-user mode</span></header>
+  <div class="content">
+    <div id="notice" class="notice"></div>
+    <section id="dashboard" class="page active">
+      <p class="welcome">Manage BC appointment applications, documents and workflow status.</p>
+      <div class="cards">
+        <div class="card"><span>Total Applications</span><strong id="statTotal">0</strong></div>
+        <div class="card"><span>Pending</span><strong id="statPending">0</strong></div>
+        <div class="card"><span>Approved</span><strong id="statApproved">0</strong></div>
+        <div class="card"><span>Rejected</span><strong id="statRejected">0</strong></div>
+        <div class="card"><span>Active BCs</span><strong id="statActive">0</strong></div>
+      </div>
+      <div class="panel"><div class="panelhead"><h2>Recent Applications</h2><button class="btn" onclick="showPage('form')">＋ New Application</button></div><div id="recentTable" class="tablewrap"><div class="loading">Loading applications…</div></div></div>
+    </section>
+    <section id="applications" class="page">
+      <div class="panel">
+        <div class="panelhead"><h2>Application Register</h2><button class="btn" onclick="newApplication()">＋ New Application</button></div>
+        <div class="toolbar"><input id="searchBox" placeholder="Search name, application ID, mobile…" oninput="renderApplications()"><select id="statusFilter" onchange="renderApplications()"><option value="">All statuses</option><option>Application Received</option><option>Under Review</option><option>Documents Pending</option><option>Sent to HO</option><option>Approved</option><option>Rejected</option><option>Active</option></select><button class="btn secondary" onclick="loadApplications()">Refresh</button></div>
+        <div id="applicationsTable" class="tablewrap"><div class="loading">Loading…</div></div>
+      </div>
+    </section>
+    <section id="form" class="page">
+      <div class="panel">
+        <div class="panelhead"><h2 id="formTitle">New BC Application</h2><button class="btn secondary" onclick="showPage('applications')">Back to list</button></div>
+        <p class="muted">Enter the details below. Save the application before uploading its PDF.</p>
+        <form id="appForm" onsubmit="event.preventDefault();saveCurrentApplication()">
+          <input type="hidden" name="Application_ID" id="Application_ID">
+          <div class="fieldgrid">
+            <div class="sectiontitle">Branch and application details</div>
+            <div class="field"><label>RO Receipt Date</label><input name="RO_Receipt_Date" type="date"></div>
+            <div class="field"><label>Branch / SOL ID *</label><select name="Sol_ID" id="Sol_ID" required><option value="">Select branch</option></select></div>
+            <div class="field"><label>Kiosk Location *</label><input name="Kiosk_Location" required></div>
+            <div class="field"><label>Location Type *</label><select name="Location_Type" required><option value="">Select</option><option>Rural</option><option>Semi-Urban</option><option>Urban</option><option>Metro</option></select></div>
+            <div class="field"><label>Sanction Type *</label><select name="Sanc_Type" id="Sanc_Type" required onchange="toggleReplacement()"><option value="">Select</option><option>NEW</option><option>REPLACEMENT</option></select></div>
+            <div class="field"><label>Number of New Corporate BCs</label><input name="New_Corp_BCs" type="number" min="0"></div>
+            <div class="field"><label>Old Corporate BC</label><input name="Old_Corp_BC" id="Old_Corp_BC"></div>
+            <div class="field"><label>Old BC ID</label><input name="Old_BC_ID" id="Old_BC_ID"></div>
+            <div class="field"><label>Old BC Name</label><input name="Old_BC_Name" id="Old_BC_Name"></div>
+            <div class="field"><label>Old BC OD Account</label><input name="Old_BC_OD_ACC" id="Old_BC_OD_ACC"></div>
+            <div class="sectiontitle">Kiosk location (from LGD MASTER)</div>
+            <div class="field"><label>District</label><select name="District_Name" id="District_Name" onchange="districtChanged()"><option value="">Select district</option></select></div>
+            <div class="field"><label>District Code</label><input name="District_Code" id="District_Code" readonly></div>
+            <div class="field"><label>Sub-District / Tehsil</label><select name="Sub_District_Name" id="Sub_District_Name" onchange="subDistrictChanged()"><option value="">Select sub-district</option></select></div>
+            <div class="field"><label>Sub-District Code</label><input name="Sub_District_Code" id="Sub_District_Code" readonly></div>
+            <div class="field"><label>Village</label><select name="Village_Name" id="Village_Name" onchange="villageChanged()"><option value="">Select village</option></select></div>
+            <div class="field"><label>Village Code</label><input name="Village_Code" id="Village_Code" readonly></div>
+            <div class="field"><label>SSA / NSSA</label><input name="SSA_NSSA" id="SSA_NSSA"></div>
+            <div class="sectiontitle">Applicant details</div>
+            <div class="field"><label>Name of BC *</label><input name="Name_of_BCs" required></div>
+            <div class="field"><label>Gender</label><select name="Gender"><option value="">Select</option><option>Male</option><option>Female</option><option>Other</option></select></div>
+            <div class="field"><label>Education</label><input name="Education"></div>
+            <div class="field"><label>Mobile No.</label><input name="Mobile_No" inputmode="numeric" maxlength="10"></div>
+            <div class="field"><label>Email</label><input name="Email_ID" type="email"></div>
+            <div class="field"><label>Aadhaar No.</label><input name="Aadhaar_No" inputmode="numeric" maxlength="12"></div>
+            <div class="field"><label>PAN No.</label><input name="PAN_No" maxlength="10" style="text-transform:uppercase"></div>
+            <div class="field"><label>PIN Code</label><input name="PIN_Code" inputmode="numeric" maxlength="6"></div>
+            <div class="field full"><label>Permanent Address</label><textarea name="Permanent_Address"></textarea></div>
+            <div class="field full"><label>Communication Address</label><textarea name="Communication_Address"></textarea></div>
+            <div class="sectiontitle">Application PDF</div>
+            <div class="field full"><label>Upload application PDF (max 7 MB)</label><div class="fileline"><input id="applicationPdf" type="file" accept="application/pdf,.pdf"><button type="button" class="btn secondary" onclick="readPdf()">Read PDF & Autofill</button></div><div class="small">PDF text extraction requires the Advanced Google service Drive API v2 to be enabled.</div><div id="pdfLink" class="small"></div></div>
+            <div class="field full"><label>Remarks</label><textarea name="Remarks"></textarea></div>
+          </div>
+          <div class="formactions"><button class="btn" id="saveBtn" type="submit">Save Application</button><button class="btn secondary" type="button" onclick="resetForm()">Clear Form</button></div>
+        </form>
+      </div>
+    </section>
+  </div>
 </main>
+</div>
 <script>
-const DEFAULT_API_URL = 'https://script.google.com/macros/s/AKfycbyfKevT0SYweMYPtrqKUjy2Dh96f4nH73mcH03eCcWS6ZDpnlihtUPKOTMO3e-rlHbGVA/exec';
-let API_URL = (localStorage.getItem('MPGB_BC_API_URL') || DEFAULT_API_URL).trim();
-const statuses=['Application Received','Under Review','Documents Pending','Sent to HO','Approval Pending','Approved','Rejected','Sanction Received','Active'];
-const formFields=['Application_ID','RO_Receipt_Date','Sol_ID','Link_Branch','Sol_District','Kiosk_Location','Location_Type','SSA_Name','District_Name','District_Code','Sub_District_Name','Sub_District_Code','Village_Name','Village_Code','SSA_NSSA','Sanc_Type','New_Corp_BCs','Old_Corp_BC','Old_BC_ID','Old_BC_Name','Old_BC_OD_ACC','Name_of_BCs','Gender','Education','Permanent_Address','Communication_Address','PIN_Code','Mobile_No','Email_ID','Aadhaar_No','PAN_No','Document_Verification_Status','Branch_Verification','Remarks','Eligibility_Qualification','Eligibility_Residence','Eligibility_Reputation','Eligibility_No_Criminal_Record','Eligibility_Due_Diligence','Score_Location','Score_Reputation','Score_Age','Score_Education','Score_Banking','Score_Computer_Literacy','Score_Present_Occupation','Score_Experience','Score_Annual_Income','Score_Total','Score_Qualifies','Branch_Manager_Comments','Branch_Manager_Recommendation','Branch_Manager_Name','Branch_Manager_Date','RO_Committee_Recommendation','RO_Committee_Comments','RO_Committee_Member1','RO_Committee_Member2','RO_Committee_Member3','RO_Committee_Date','HO_Approval_Status','HO_Approval_Authority','HO_Approval_Date'];
-let initData=null,records=[],current=null;
-const FALLBACK_BRANCHES=[['12010','Jabalpur','Jabalpur'],['12020','RANJHI','Jabalpur'],['12030','SIHORA','Jabalpur'],['12040','KHTOLA BAZAR','Jabalpur'],['12050','SAHAJPUR','Jabalpur'],['12060','SHAHPURA','Jabalpur'],['12070','PANAGAR','Jabalpur'],['12080','LAMAKNA','Jabalpur'],['12090','ADHARTAL','Jabalpur'],['12100','PATAN','Jabalpur'],['12110','MANJHOLI','Jabalpur'],['12120','PISANHARI MADIYA','Jabalpur'],['12130','EKTA CHOWK','Jabalpur'],['12140','KARMETA GRAM','Jabalpur'],['12150','BARGI','Jabalpur'],['12160','GWARIGHAT','Jabalpur'],['12170','BILHARI','Jabalpur'],['12180','KUAA','Jabalpur'],['12190','KYMORE','Katni'],['12200','DEVRA KALA','Katni'],['12210','VILAYATKALA','Katni'],['12220','DASARMAN','Katni'],['12230','AMGAWAN','Katni'],['12240','Katni','Katni'],['12250','DEVRI TOLA','Katni'],['12260','PANUMARIYA','Katni'],['12270','BADWARA','Katni'],['12280','VIJAYRAGHAVGARH','Katni'],['12290','KHIRHANI','Katni'],['12300','BARAHI','Katni'],['12310','BAHORIBAND','Katni'],['12320','NARSINGHPUR','Narsinghpur'],['12330','STATION GANJ NAR','Narsinghpur'],['12340','AMGAON BADA','Narsinghpur'],['12350','KANWAS','Narsinghpur'],['12360','PANARI','Narsinghpur'],['12370','BOHANI','Narsinghpur'],['12380','KARELI','Narsinghpur'],['12390','BAGASPUR','Narsinghpur'],['12400','SAIKHEDA','Narsinghpur'],['12410','CHICHLI','Narsinghpur'],['12420','BARAHTA','Narsinghpur'],['12430','KAMTI IMALIYA','Narsinghpur'],['12440','SINGHPUR BADA','Narsinghpur'],['12450','GADARWARA','Narsinghpur'],['12460','DEORI LOLRI','Narsinghpur'],['12470','NARSINGHPUR BASTI','Narsinghpur'],['12480','KARAKBEL','Narsinghpur'],['12490','SOORWARI','Narsinghpur'],['12500','TENDUKHEDA','Narsinghpur'],['12510','GOTEGAON','Narsinghpur'],['12520','COLLECTORET NAR','Narsinghpur'],['12530','KARELI EXT','Narsinghpur']];
+/* If this HTML is hosted on GitHub Pages, paste the deployed Apps Script /exec URL below.
+   If this file is served directly by Apps Script, leave API_URL empty to use google.script.run. */
+const API_URL = '';
+let initialData={branches:[],lgd:[]}, applications=[], currentPdfUrl='';
 const $=id=>document.getElementById(id);
-function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
-function showAlert(id,t,type='error'){let e=$(id);e.textContent=t||'';e.className='alert '+(t?'show '+type:'');}
-function configureApi(){
-  const current = API_URL || '';
-  const entered = window.prompt(
-    'Paste the deployed Google Apps Script Web App URL ending in /exec.\n' +
-    'For an Apps Script-hosted page, leave this blank and press OK.',
-    current
-  );
-  if (entered === null) return;
-  API_URL = entered.trim();
-  if (API_URL && !/^https:\/\/script\.google\.com\/macros\/s\/[^/]+\/exec\/?$/.test(API_URL)) {
-    showAlert('alert','The URL should be the deployed Google Apps Script Web App URL ending in /exec.');
-    return;
-  }
-  if (API_URL) localStorage.setItem('MPGB_BC_API_URL', API_URL);
-  else localStorage.removeItem('MPGB_BC_API_URL');
-  showAlert('alert', API_URL ? 'Backend URL saved in this browser. Testing connection…' : 'Backend URL cleared. Apps Script hosting mode selected.', 'success');
-  boot();
+function notice(msg,type='ok'){const n=$('notice');n.className='notice '+(type==='err'?'err':'ok');n.textContent=msg;window.scrollTo({top:0,behavior:'smooth'});setTimeout(()=>{n.className='notice';},7000);}
+function showPage(name){document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id===name));document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.page===name));$('pageTitle').textContent=({dashboard:'Dashboard',applications:'Applications',form:$('Application_ID').value?'Edit Application':'New Application'})[name]||name;if(name==='applications')renderApplications();}
+document.querySelectorAll('.nav button').forEach(b=>b.addEventListener('click',()=>{if(b.dataset.page==='form')newApplication();else showPage(b.dataset.page);}));
+function api(action,payload={}) {
+  if(API_URL) return fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action,payload})}).then(r=>r.json()).then(r=>{if(!r.ok)throw Error(r.error||'Request failed');return r.data;});
+  if(!window.google||!google.script||!google.script.run) return Promise.reject(Error('Backend not connected. If using GitHub Pages, set API_URL to your deployed Apps Script /exec URL.'));
+  return new Promise((resolve,reject)=>google.script.run.withSuccessHandler(resolve).withFailureHandler(e=>reject(Error(e.message||String(e)))).apiAction(action,payload));
 }
-function call(action,payload={}){
-  return new Promise((resolve,reject)=>{
-    if(API_URL){
-      fetch(API_URL,{
-        method:'POST',
-        headers:{'Content-Type':'text/plain;charset=utf-8'},
-        body:JSON.stringify({action,payload})
-      })
-      .then(async r=>{
-        const body=await r.text();
-        let x;
-        try{x=JSON.parse(body);}catch(_){throw Error('Apps Script did not return JSON. Check Web App deployment access and backend code.');}
-        if(!r.ok) throw Error('HTTP '+r.status);
-        // Support the common {ok:true,data:...} and {success:true,data:...} response shapes.
-        if(x && x.ok===true) return x.data;
-        if(x && x.success===true) return (x.data!==undefined ? x.data : x);
-        throw Error((x&&(x.error||x.message))||'Backend rejected action: '+action);
-      })
-      .then(resolve).catch(reject);
-      return;
-    }
-    if(typeof google==='undefined'||!google.script||!google.script.run){
-      reject(Error('Backend is not configured. Click “Connect Backend” and paste the deployed Apps Script Web App URL ending in /exec.'));
-      return;
-    }
-    google.script.run
-      .withSuccessHandler(resolve)
-      .withFailureHandler(e=>reject(Error(e&&e.message?e.message:String(e))))
-      .apiAction(action,payload);
-  });
-}
-async function showHome(){document.body.classList.remove('sidebar-open');document.getElementById('listPage').classList.remove('hidden');document.getElementById('formPage')?.classList.add('hidden');document.getElementById('detailPage')?.classList.add('hidden');document.getElementById('pageTitle').textContent='All Applications';document.getElementById('subtitle').textContent='Search applications, check status, or add a new BC application.';}
-async function boot(){
-  // Populate SOL IDs immediately from the hardcoded master, even if API/authentication fails.
-  initData={branches:FALLBACK_BRANCHES.map(b=>({Sol_ID:b[0],Link_Branch:b[1],Sol_District:b[2]})),lgd:[]};
-  renderBranches();
-  try{const remote=await call('getInitialData');if(remote&&Array.isArray(remote.branches)&&remote.branches.length)initData.branches=remote.branches;let locationRows=(remote&&Array.isArray(remote.lgd))?remote.lgd:null;try{const direct=await call('getLGDData');if(Array.isArray(direct))locationRows=direct;}catch(directErr){console.warn('Direct LGD read unavailable; using getInitialData result.',directErr);}if(Array.isArray(locationRows))initData.lgd=normalizeLGDRows(locationRows);renderBranches();populateDistricts();updateLGDStatus();const chip=document.getElementById('connectionChip');if(chip){chip.className='connection-chip connected';chip.innerHTML='<i></i> Backend connected';const side=document.getElementById('sideConnectionText');if(side)side.textContent='Backend connected';const light=document.querySelector('.status-light');if(light)light.style.background='#16a34a';}await refreshData();}
-  catch(e){populateDistricts();updateLGDStatus();const chip=document.getElementById('connectionChip');if(chip){chip.className='connection-chip failed';chip.innerHTML='<i></i> Connection needs attention';const side=document.getElementById('sideConnectionText');if(side)side.textContent='Connection needs attention';const light=document.querySelector('.status-light');if(light)light.style.background='#dc4c43';}showAlert('alert','Could not load live portal data: '+e.message+'. The backend URL is already configured. Check Apps Script deployment access and confirm the deployed Code.gs supports getInitialData and the other portal actions.');renderTable();}
-}
-function renderBranches(){ $('Sol_ID').innerHTML='<option value="">-- Select Branch --</option>'+(initData.branches||[]).map(b=>`<option value="${esc(b.Sol_ID)}">${esc(b.Sol_ID)} - ${esc(b.Link_Branch)}</option>`).join(''); }
-async function refreshData(){try{showAlert('alert','');let [a,s]=await Promise.all([call('getApplications',{}),call('getDashboardStats',{})]);records=Array.isArray(a)?a:(a.applications||[]);$('total').textContent=s.total??records.length;$('pending').textContent=s.pending??0;$('approved').textContent=s.approved??0;$('active').textContent=s.active??0;renderTable();}catch(e){showAlert('alert','Unable to load applications: '+e.message+'. Please check API_URL, Apps Script API actions and deployment permissions.');renderTable();}}
-function renderTable(){let q=($('search').value||'').toLowerCase(),st=$('status').value;let a=records.filter(r=>(!st||r.Application_Status===st)&&(!q||['Application_ID','Sol_ID','Link_Branch','Name_of_BCs','Sol_District','BC_ID_Number'].some(k=>String(r[k]||'').toLowerCase().includes(q))));$('count').textContent=a.length+' records';if(!a.length){$('table').innerHTML='<div class="empty">No applications found.</div>';return;}$('table').innerHTML='<table><thead><tr><th>Application ID</th><th>Application Date</th><th>SOL ID</th><th>Link Branch</th><th>Applicant / BC Name</th><th>District</th><th>Application Status</th><th>HO Sanction</th><th>BC ID</th><th>Action</th></tr></thead><tbody>'+a.map(r=>`<tr><td>${esc(r.Application_ID)}</td><td>${esc(r.Application_Date||r.RO_Receipt_Date)}</td><td>${esc(r.Sol_ID)}</td><td>${esc(r.Link_Branch)}</td><td>${esc(r.Name_of_BCs)}</td><td>${esc(r.Sol_District)}</td><td><span class="pill">${esc(r.Application_Status||'Application Received')}</span></td><td>${esc(r.HO_Sanction_Status||'Pending')}</td><td>${esc(r.BC_ID_Number||'—')}</td><td><button class="action" onclick="viewApp('${esc(r.Application_ID)}')">View</button><button class="action" onclick="editApp('${esc(r.Application_ID)}')">Edit</button></td></tr>`).join('')+'</tbody></table>';}
-function clearFilters(){$('search').value='';$('status').value='';renderTable();}
-function section(which){['listPage','formPage','detailPage'].forEach(id=>$(id).classList.toggle('hidden',id!==which));let list=which==='listPage';$('refreshBtn').classList.toggle('hidden',!list);$('newBtn').classList.toggle('hidden',!list);$('pageTitle').textContent=list?'All Applications':which==='formPage'?'BC Application Form':'Application Details';$('subtitle').textContent=list?'Search applications, check status, or add a new BC application.':which==='formPage'?'Create or update a BC appointment application.':'View complete application and workflow information.';}
-function newApplication(){
-  // Switch to the form first so a non-critical reset error cannot leave the button appearing unresponsive.
-  document.body.classList.remove('sidebar-open');
-  section('formPage');
-  try { resetForm(); } catch(err) { console.error('Form reset warning:',err); }
-  const dateField=$('RO_Receipt_Date');
-  if(dateField) dateField.value=new Date().toISOString().slice(0,10);
-  const title=$('formTitle'); if(title) title.textContent='New BC Application';
-  const idField=$('Application_ID'); if(idField) idField.value='';
-  const page=document.getElementById('formPage');
-  if(page) page.scrollIntoView({behavior:'smooth',block:'start'});
-}
-function branchChanged(){let b=(initData.branches||[]).find(x=>x.Sol_ID===$('Sol_ID').value);$('Link_Branch').value=b?b.Link_Branch:'';$('Sol_District').value=b?b.Sol_District:'';}
-function toggleOld(){let y=$('Sanc_Type').value==='REPLACEMENT';$('oldFields').classList.toggle('hidden',!y);if(!y)['Old_Corp_BC','Old_BC_ID','Old_BC_Name','Old_BC_OD_ACC'].forEach(k=>$(k).value='');}
-function toggleSSA(){
-  const t=$('Location_Type').value;
-  const isSSA=t==='SSA';
-  const isBC=t==='BC LOCATION';
-  $('ssaField').classList.toggle('hidden',!isSSA);
-  $('lgdFields').classList.toggle('hidden',!isBC);
-  if(!isSSA) $('SSA_Name').value='';
-  if(!isBC){
-    ['District_Name','District_Code','Sub_District_Name','Sub_District_Code','Village_Name','Village_Code','SSA_NSSA'].forEach(k=>$(k).value='');
-    $('Sub_District_Name').disabled=true;$('Village_Name').disabled=true;
-  } else {
-    populateDistricts(); updateLGDStatus();
-    if(!lgdRows().length) loadLGDData();
-  }
-}
-function normKey(v){return String(v==null?'':v).toLowerCase().replace(/[^a-z0-9]/g,'');}
-function normalizeLGDRows(rows){
-  return (rows||[]).map(r=>{
-    const o={}; Object.keys(r||{}).forEach(k=>o[normKey(k)]=r[k]);
-    return {
-      District_Name:String(o.districtname??o.district??'').trim(),
-      District_Code:String(o.districtcode??'').trim(),
-      Sub_District_Name:String(o.subdistrictname??o.subdistrict??'').trim(),
-      Sub_District_Code:String(o.subdistrictcode??'').trim(),
-      Village_Name:String(o.villagename??o.village??'').trim(),
-      Village_Code:String(o.villagecode??'').trim(),
-      SSA_NSSA:String(o.ssanssa??o.ssanNssa??o.ssannssa??o.ssanss??'').trim()
-    };
-  }).filter(r=>r.District_Name && r.Sub_District_Name && r.Village_Name);
-}
-function lgdRows(){return normalizeLGDRows(initData?.lgd||[]);}
-function uniqueBy(arr,key){let m=new Map();(arr||[]).forEach(x=>{let v=String(x[key]||'').trim();if(v&&!m.has(v))m.set(v,x);});return [...m.values()];}
-function fillSelect(id,items,placeholder){$(id).innerHTML='<option value="">'+placeholder+'</option>'+items.map(x=>`<option value="${esc(x.name)}">${esc(x.name)}</option>`).join('');}
-function updateLGDStatus(message){
- const el=$('lgdStatus'); if(!el)return;
- const n=lgdRows().length;
- if(message){el.textContent=message;el.className='lgd-status error';return;}
- if(n){el.textContent=`LGD Master loaded: ${n.toLocaleString('en-IN')} village records. Select District, then Sub-District, then Village.`;el.className='lgd-status ready';}
- else {el.textContent='LGD Master records are not loaded. Check the Apps Script connection and confirm the sheet name is exactly “LGD MASTER”.';el.className='lgd-status error';}
-}
-async function loadLGDData(){
- const el=$('lgdStatus');if(el){el.textContent='Loading LGD Master records…';el.className='lgd-status';}
- try{
-   const remote=await call('getInitialData');
-   if(remote&&Array.isArray(remote.branches)&&remote.branches.length)initData.branches=remote.branches;
-   let locationRows=(remote&&Array.isArray(remote.lgd))?remote.lgd:null;
-   try { const direct=await call('getLGDData'); if(Array.isArray(direct))locationRows=direct; } catch(directErr) { console.warn('Direct LGD read unavailable; using getInitialData result.',directErr); }
-   if(Array.isArray(locationRows))initData.lgd=normalizeLGDRows(locationRows);
-   renderBranches();populateDistricts();updateLGDStatus();
- }catch(e){updateLGDStatus('Could not load LGD Master: '+e.message+'. Check the deployed Code.gs, spreadsheet binding, and the exact LGD MASTER tab.');}
-}
-function populateDistricts(){
-  const rows=lgdRows();
-  const a=uniqueBy(rows.filter(x=>x.District_Name),'District_Name').map(x=>({name:x.District_Name,code:x.District_Code}));
-  fillSelect('District_Name',a,'-- Select District --');
-  $('District_Code').value='';
-  if(!a.length)updateLGDStatus();
-}
-function districtChanged(){
-  const name=$('District_Name').value;
-  const rows=lgdRows();
-  const a=rows.filter(x=>x.District_Name===name);
-  $('District_Code').value=a[0]?.District_Code||'';
-  fillSelect('Sub_District_Name',uniqueBy(a,'Sub_District_Name').map(x=>({name:x.Sub_District_Name,code:x.Sub_District_Code})),'-- Select Sub-District --');
-  $('Sub_District_Name').disabled=!name;
-  $('Sub_District_Code').value='';
-  fillSelect('Village_Name',[],'-- Select Village --');$('Village_Name').disabled=true;
-  $('Village_Code').value='';$('SSA_NSSA').value='';
-}
-function subDistrictChanged(){
-  const d=$('District_Name').value,n=$('Sub_District_Name').value;
-  const a=lgdRows().filter(x=>x.District_Name===d&&x.Sub_District_Name===n);
-  $('Sub_District_Code').value=a[0]?.Sub_District_Code||'';
-  fillSelect('Village_Name',uniqueBy(a,'Village_Name').map(x=>({name:x.Village_Name,code:x.Village_Code})),'-- Select Village --');
-  $('Village_Name').disabled=!n;
-  $('Village_Code').value='';$('SSA_NSSA').value='';
-}
-function villageChanged(){
-  const a=lgdRows().find(x=>x.District_Name===$('District_Name').value&&x.Sub_District_Name===$('Sub_District_Name').value&&x.Village_Name===$('Village_Name').value);
-  $('Village_Code').value=a?.Village_Code||'';$('SSA_NSSA').value=a?.SSA_NSSA||'';
-}
-function resetForm(){$('appForm').reset();$('Application_ID').value='';$('Link_Branch').value='';$('Sol_District').value='';$('formTitle').textContent='New BC Application';$('saveBtn').textContent='Save Application';showAlert('formAlert','');toggleOld();toggleSSA();calcScore();$('Sub_District_Name').disabled=true;$('Village_Name').disabled=true;}
-function calcScore(){let ks=['Score_Location','Score_Reputation','Score_Age','Score_Education','Score_Banking','Score_Computer_Literacy','Score_Present_Occupation','Score_Experience','Score_Annual_Income'];let total=ks.reduce((n,k)=>n+Number($(k)?.value||0),0);if($('Score_Total'))$('Score_Total').value=total;if($('Score_Qualifies'))$('Score_Qualifies').value=total>=18?'YES':'NO';}
-function dataForm(){let d={};formFields.forEach(k=>{if($(k))d[k]=$(k).value.trim();});d.PAN_No=(d.PAN_No||'').toUpperCase();return d;}
-function readFile(f){return new Promise((ok,no)=>{let r=new FileReader();r.onload=()=>ok(r.result);r.onerror=()=>no(Error('Unable to read PDF'));r.readAsDataURL(f);});}
-
-function readDataUrl(file){return new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=()=>reject(Error('Unable to read selected PDF.'));r.readAsDataURL(file);});}
-async function extractFromPdf(){
- const file=document.getElementById('Extract_PDF').files[0],status=document.getElementById('extractStatus'),btn=document.getElementById('extractBtn');
- if(!file){status.textContent='Choose an application PDF first.';status.className='extract-status bad';return;}
- if(file.size>10*1024*1024){status.textContent='PDF must be 10 MB or smaller.';status.className='extract-status bad';return;}
- btn.disabled=true;btn.textContent='Reading PDF…';status.textContent='Reading application PDF…';status.className='extract-status';
- try{
-  const result=await call('extractApplicationData',{fileName:file.name,mimeType:file.type||'application/pdf',dataUrl:await readDataUrl(file)});
-  const fields=result.fields||{};let filled=0;
-  Object.keys(fields).forEach(k=>{const el=document.getElementById(k);if(!el)return;const val=String(fields[k]??'').trim();if(!val)return;
-   if(el.tagName==='SELECT'){let opt=[...el.options].find(o=>o.value.toLowerCase()===val.toLowerCase()||o.textContent.trim().toLowerCase()===val.toLowerCase());if(opt){el.value=opt.value;el.dispatchEvent(new Event('change',{bubbles:true}));filled++;}}
-   else{el.value=val;el.dispatchEvent(new Event('input',{bubbles:true}));el.dispatchEvent(new Event('change',{bubbles:true}));filled++;}
-  });
-  if(fields.Sol_ID&&typeof branchChanged==='function')branchChanged();
-  document.getElementById('Extracted_Text').value=result.extractedText||result.text||'';
-  status.textContent=`PDF read complete: ${filled} field(s) filled. Review and correct details before saving.`;status.className='extract-status good';
-  const upload=document.getElementById('Application_PDF');
-  if(upload){const dt=new DataTransfer();dt.items.add(file);upload.files=dt.files;}
-  const alertBox=document.getElementById('formAlert');if(alertBox){alertBox.textContent='PDF read completed. Verify Aadhaar, PAN, mobile, address and all other details before saving.';alertBox.className='alert show success';}
- }catch(e){status.textContent='Could not read PDF: '+e.message;status.className='extract-status bad';const a=document.getElementById('formAlert');if(a){a.textContent=e.message;a.className='alert show error';}}
- finally{btn.disabled=false;btn.textContent='Read PDF & Fill Form';}
-}
-
-async function saveApp(e){
-  e.preventDefault();
-  const file=$('Application_PDF').files[0];
-  if(file && file.size>10*1024*1024){showAlert('formAlert','PDF must be 10 MB or smaller.');return;}
-  $('saveBtn').disabled=true;
-  try{
-    const res=await call('saveApplication',dataForm());
-    if(file){
-      await call('uploadPdf',{Application_ID:res.Application_ID,kind:'application',fileName:file.name,mimeType:file.type||'application/pdf',dataUrl:await readFile(file)});
-    }
-    showAlert('alert',res.message||'Application saved.','success');
-    resetForm();await refreshData();section('listPage');
-  }catch(err){showAlert('formAlert',err.message||String(err));}
-  finally{$('saveBtn').disabled=false;}
-}
-async function viewApp(id){try{current=await call('getApplicationById',{Application_ID:id});renderDetails();renderWorkflow();let h=await call('getWorkflowHistory',{Application_ID:id});$('history').innerHTML=historyTable(h||[]);$('sanctionLink').innerHTML=current.HO_Sanction_Letter_URL?`<a target="_blank" href="${esc(current.HO_Sanction_Letter_URL)}">Open sanction PDF</a>`:'Not uploaded';section('detailPage');}catch(e){showAlert('alert','Unable to open application: '+e.message);}}
-function editApp(id){let r=records.find(x=>x.Application_ID===id);if(r)fillForm(r);else call('getApplicationById',{Application_ID:id}).then(fillForm).catch(e=>showAlert('alert',e.message));}
-function editCurrent(){if(current)fillForm(current);}
-function fillForm(r){
-  resetForm();
-  formFields.forEach(k=>{if($(k)&&r[k]!==undefined&&!['District_Name','District_Code','Sub_District_Name','Sub_District_Code','Village_Name','Village_Code'].includes(k))$(k).value=r[k]||'';});
-  branchChanged();toggleOld();toggleSSA();
-  if(r.Location_Type==='BC LOCATION'){
-    populateDistricts();
-    $('District_Name').value=r.District_Name||'';
-    districtChanged();
-    $('Sub_District_Name').value=r.Sub_District_Name||'';
-    subDistrictChanged();
-    $('Village_Name').value=r.Village_Name||'';
-    villageChanged();
-  }
-  calcScore();$('formTitle').textContent='Edit Application — '+r.Application_ID;$('saveBtn').textContent='Update Application';section('formPage');
-}
-function backToList(){section('listPage');refreshData();}
-function renderDetails(){let groups={'Application & Branch':['Application_ID','Application_Date','RO_Receipt_Date','Sol_ID','Link_Branch','Sol_District','Sanc_Type','Application_Status'],'Kiosk & Location':['Kiosk_Location','Location_Type','SSA_Name','District_Name','District_Code','Sub_District_Name','Sub_District_Code','Village_Name','Village_Code','New_Corp_BCs','Old_Corp_BC','Old_BC_ID','Old_BC_Name','Old_BC_OD_ACC'],'Applicant Details':['Name_of_BCs','Gender','Education','Mobile_No','Email_ID','Aadhaar_No','PAN_No','PIN_Code','Permanent_Address','Communication_Address'],'Eligibility & Rating':['Eligibility_Qualification','Eligibility_Residence','Eligibility_Reputation','Eligibility_No_Criminal_Record','Eligibility_Due_Diligence','Score_Location','Score_Reputation','Score_Age','Score_Education','Score_Banking','Score_Computer_Literacy','Score_Present_Occupation','Score_Experience','Score_Annual_Income','Score_Total','Score_Qualifies'],'Branch / RO Recommendations':['Branch_Manager_Recommendation','Branch_Manager_Name','Branch_Manager_Date','Branch_Manager_Comments','RO_Committee_Recommendation','RO_Committee_Member1','RO_Committee_Member2','RO_Committee_Member3','RO_Committee_Date','RO_Committee_Comments','HO_Approval_Status','HO_Approval_Authority','HO_Approval_Date'],'Documents & Verification':['Application_PDF_URL','Application_PDF_Upload_Date','Document_Verification_Status','Branch_Verification','Remarks','HO_Sanction_Status','HO_Sanction_Letter_URL'],'Post-Sanction':['OD_Account_Created','OD_Account_Number','BC_ID_Created','BC_ID_Number','Terminal_Mapping_Status','Terminal_ID','Aadhaar_Mapping_Status','PAN_Mapping_Status','Final_Activation_Status','Activation_Date']};$('detailTitle').textContent='Application: '+current.Application_ID;$('details').innerHTML=Object.entries(groups).map(([title,keys])=>`<div class="full"><h3>${esc(title)}</h3></div>`+keys.map(k=>`<div class="detail"><label>${esc(k.replace(/_/g,' '))}</label><strong>${/_URL$/.test(k)&&current[k]?`<a target="_blank" href="${esc(current[k])}">Open PDF</a>`:esc(current[k])||'—'}</strong></div>`).join('')).join('');}
-const wf=[['Application_Status','Application Status',statuses],['Document_Verification_Status','Document Verification',['Pending','Verified','Deficient']],['Branch_Verification','Branch Verification',['Pending','Verified','Returned']],['HO_Sanction_Status','HO Sanction Status',['Pending','Received','Approved','Rejected']],['OD_Account_Created','OD Account Created',['NO','YES']],['OD_Account_Number','OD Account Number'],['BC_ID_Created','BC ID Created',['NO','YES']],['BC_ID_Number','BC ID Number'],['Terminal_Mapping_Status','Terminal Mapping',['Pending','Completed','Not Applicable']],['Terminal_ID','Terminal ID'],['Aadhaar_Mapping_Status','Aadhaar Mapping',['Pending','Completed','Not Applicable']],['PAN_Mapping_Status','PAN Mapping',['Pending','Completed','Not Applicable']],['Final_Activation_Status','Final Activation Status',['Pending','Active','Inactive','Rejected']],['Activation_Date','Activation Date','date'],['Remarks','Workflow Remarks','textarea']];
-function renderWorkflow(){$('workflow').innerHTML='<div class="grid">'+wf.map(([k,l,o])=>{let v=current[k]||'';if(o==='date')return `<div class="field"><label>${l}</label><input id="wf_${k}" type="date" value="${esc(String(v).slice(0,10))}"></div>`;if(o==='textarea')return `<div class="field full"><label>${l}</label><textarea id="wf_${k}">${esc(v)}</textarea></div>`;if(Array.isArray(o))return `<div class="field"><label>${l}</label><select id="wf_${k}">${o.map(x=>`<option ${x===v?'selected':''}>${esc(x)}</option>`).join('')}</select></div>`;return `<div class="field"><label>${l}</label><input id="wf_${k}" value="${esc(v)}"></div>`;}).join('')+'</div><button class="btn primary" style="margin-top:18px" onclick="saveWorkflow()">Save Workflow</button>';}
-async function saveWorkflow(){try{let updates={};wf.forEach(([k])=>updates[k]=$('wf_'+k).value);updates.Workflow_Remarks=$('wf_Remarks').value;await call('updateWorkflow',{Application_ID:current.Application_ID,updates});await viewApp(current.Application_ID);await refreshData();showAlert('alert','Workflow updated successfully.','success');}catch(e){showAlert('alert',e.message);}}
-async function uploadSanction(){let f=$('Sanction_PDF').files[0];if(!f){showAlert('alert','Select a sanction PDF first.');return;}if(f.size>10*1024*1024){showAlert('alert','PDF must be 10 MB or smaller.');return;}try{await call('uploadPdf',{Application_ID:current.Application_ID,kind:'sanction',fileName:f.name,mimeType:f.type||'application/pdf',dataUrl:await readFile(f)});await viewApp(current.Application_ID);showAlert('alert','Sanction PDF uploaded.','success');}catch(e){showAlert('alert',e.message);}}
-function historyTable(a){if(!a.length)return '<div class="empty">No workflow history.</div>';return '<div class="tablewrap"><table><thead><tr><th>Date/Time</th><th>Action By</th><th>Action</th><th>Field</th><th>Old Value</th><th>New Value</th><th>Remarks</th></tr></thead><tbody>'+a.map(r=>`<tr><td>${esc(r.Event_DateTime)}</td><td>${esc(r.Action_By)}</td><td>${esc(r.Action)}</td><td>${esc(r.Field_Name)}</td><td>${esc(r.Old_Value)}</td><td>${esc(r.New_Value)}</td><td>${esc(r.Remarks)}</td></tr>`).join('')+'</tbody></table></div>';}
-window.addEventListener('load',boot);
-</script></body></html>
+function loadInitial(){api('getInitialData').then(data=>{initialData=data||{branches:[],lgd:[]};populateBranches();populateDistricts();loadApplications();loadStats();}).catch(e=>notice(e.message,'err'));}
+function populateBranches(selected=''){const s=$('Sol_ID');s.innerHTML='<option value="">Select branch</option>';(initialData.branches||[]).forEach(b=>{const o=document.createElement('option');o.value=b.Sol_ID;o.textContent=b.Sol_ID+' — '+b.Link_Branch;s.appendChild(o)});s.value=selected;}
+function unique(vals){return [...new Set(vals.filter(v=>String(v||'').trim()).map(v=>String(v).trim()))].sort((a,b)=>a.localeCompare(b));}
+function populateDistricts(selected=''){const s=$('District_Name');s.innerHTML='<option value="">Select district</option>';unique((initialData.lgd||[]).map(x=>x.District_Name)).forEach(v=>{let o=document.createElement('option');o.value=v;o.textContent=v;s.appendChild(o)});s.value=selected;districtChanged();}
+function districtChanged(){const d=$('District_Name').value;const rows=(initialData.lgd||[]).filter(x=>x.District_Name===d);$('District_Code').value=rows.length?rows[0].District_Code:'';const sub=$('Sub_District_Name');sub.innerHTML='<option value="">Select sub-district</option>';unique(rows.map(x=>x.Sub_District_Name)).forEach(v=>{let o=document.createElement('option');o.value=v;o.textContent=v;sub.appendChild(o)});$('Sub_District_Code').value='';$('Village_Name').innerHTML='<option value="">Select village</option>';$('Village_Code').value='';$('SSA_NSSA').value='';}
+function subDistrictChanged(){const d=$('District_Name').value,sd=$('Sub_District_Name').value;const rows=(initialData.lgd||[]).filter(x=>x.District_Name===d&&x.Sub_District_Name===sd);$('Sub_District_Code').value=rows.length?rows[0].Sub_District_Code:'';const v=$('Village_Name');v.innerHTML='<option value="">Select village</option>';unique(rows.map(x=>x.Village_Name)).forEach(n=>{let o=document.createElement('option');o.value=n;o.textContent=n;v.appendChild(o)});$('Village_Code').value='';$('SSA_NSSA').value='';}
+function villageChanged(){const row=(initialData.lgd||[]).find(x=>x.District_Name===$('District_Name').value&&x.Sub_District_Name===$('Sub_District_Name').value&&x.Village_Name===$('Village_Name').value);$('Village_Code').value=row?row.Village_Code:'';$('SSA_NSSA').value=row?row.SSA_NSSA:'';}
+function loadApplications(){api('getApplications',{}).then(a=>{applications=Array.isArray(a)?a:[];renderApplications();renderRecent();}).catch(e=>notice(e.message,'err'));}
+function loadStats(){api('getDashboardStats').then(s=>{['Total','Pending','Approved','Rejected','Active'].forEach((k,i)=>{$('stat'+k).textContent=[s.total,s.pending,s.approved,s.rejected,s.active][i]||0;});}).catch(()=>{});}
+function esc(x){return String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function tableHtml(rows){if(!rows.length)return '<p class="muted" style="padding:10px">No applications found.</p>';return '<table><thead><tr><th>Application ID</th><th>Applicant</th><th>Branch</th><th>Mobile</th><th>Status</th><th>PDF</th><th>Action</th></tr></thead><tbody>'+rows.map(r=>'<tr><td>'+esc(r.Application_ID)+'</td><td>'+esc(r.Name_of_BCs)+'</td><td>'+esc(r.Sol_ID+' '+(r.Link_Branch||''))+'</td><td>'+esc(r.Mobile_No)+'</td><td><span class="status">'+esc(r.Application_Status||'Application Received')+'</span></td><td>'+(r.Application_PDF_URL?'<a href="'+esc(r.Application_PDF_URL)+'" target="_blank" rel="noopener">Open PDF</a>':'—')+'</td><td><button class="btn secondary" onclick="editApplication(\''+esc(r.Application_ID)+'\')">Open / Edit</button></td></tr>').join('')+'</tbody></table>';}
+function renderApplications(){const q=($('searchBox')?.value||'').toLowerCase(),st=$('statusFilter')?.value||'';const rows=applications.filter(r=>(!st||r.Application_Status===st)&&(!q||[r.Application_ID,r.Name_of_BCs,r.Sol_ID,r.Link_Branch,r.Mobile_No].some(v=>String(v||'').toLowerCase().includes(q))));$('applicationsTable').innerHTML=tableHtml(rows);}
+function renderRecent(){$('recentTable').innerHTML=tableHtml(applications.slice(0,6));}
+function newApplication(){resetForm();showPage('form');}
+function resetForm(){ $('appForm').reset();$('Application_ID').value='';$('formTitle').textContent='New BC Application';$('pdfLink').textContent='';currentPdfUrl='';populateBranches();populateDistricts();toggleReplacement();}
+function toggleReplacement(){const rep=$('Sanc_Type').value==='REPLACEMENT';['Old_Corp_BC','Old_BC_ID','Old_BC_Name','Old_BC_OD_ACC'].forEach(id=>$(id).disabled=!rep);}
+function formData(){const d={};new FormData($('appForm')).forEach((v,k)=>d[k]=String(v).trim());['District_Code','Sub_District_Code','Village_Code','SSA_NSSA'].forEach(k=>d[k]=$(k).value);return d;}
+function saveCurrentApplication(){const btn=$('saveBtn');btn.disabled=true;btn.textContent='Saving…';const d=formData();api('saveApplication',d).then(async res=>{ $('Application_ID').value=res.Application_ID;$('formTitle').textContent='Edit BC Application — '+res.Application_ID;let msg=res.message+' ID: '+res.Application_ID;const file=$('applicationPdf').files[0];if(file){if(file.size>7*1024*1024)throw Error('Application saved, but PDF exceeds 7 MB. Choose a smaller PDF and save again.');const dataUrl=await fileToDataUrl(file);const up=await api('uploadPdf',{Application_ID:res.Application_ID,kind:'application',fileName:file.name,mimeType:file.type||'application/pdf',dataUrl});currentPdfUrl=up.url;$('pdfLink').innerHTML='<a href="'+esc(up.url)+'" target="_blank" rel="noopener">Open uploaded application PDF</a>';msg+=' PDF uploaded.';}await loadApplicationsAsync();notice(msg);}).catch(e=>notice(e.message,'err')).finally(()=>{btn.disabled=false;btn.textContent='Save Application';});}
+function loadApplicationsAsync(){return api('getApplications',{}).then(a=>{applications=Array.isArray(a)?a:[];renderApplications();renderRecent();return api('getDashboardStats').then(s=>{['Total','Pending','Approved','Rejected','Active'].forEach((k,i)=>{$('stat'+k).textContent=[s.total,s.pending,s.approved,s.rejected,s.active][i]||0;});});});}
+function editApplication(id){const r=applications.find(x=>x.Application_ID===id);if(!r){notice('Application not found in current list. Refresh and try again.','err');return;}resetForm();$('Application_ID').value=r.Application_ID;Object.keys(r).forEach(k=>{const el=$('appForm').elements.namedItem(k);if(el && !['Application_ID'].includes(k))try{el.value=r[k]??'';}catch(e){}});populateBranches(r.Sol_ID||'');populateDistricts(r.District_Name||'');districtChanged();$('Sub_District_Name').value=r.Sub_District_Name||'';subDistrictChanged();$('Village_Name').value=r.Village_Name||'';villageChanged();['District_Code','Sub_District_Code','Village_Code','SSA_NSSA'].forEach(k=>{if(r[k])$(k).value=r[k];});$('formTitle').textContent='Edit BC Application — '+id;$('pdfLink').innerHTML=r.Application_PDF_URL?'<a href="'+esc(r.Application_PDF_URL)+'" target="_blank" rel="noopener">Open uploaded application PDF</a>':'';toggleReplacement();showPage('form');}
+function fileToDataUrl(file){return new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=()=>reject(Error('Could not read selected file.'));reader.readAsDataURL(file);});}
+async function readPdf(){const file=$('applicationPdf').files[0];if(!file){notice('Choose a PDF file first.','err');return;}if(file.size>7*1024*1024){notice('PDF must be 7 MB or smaller.','err');return;}if(file.type!=='application/pdf'&&!file.name.toLowerCase().endsWith('.pdf')){notice('Please choose a PDF file.','err');return;}try{const dataUrl=await fileToDataUrl(file);const result=await api('extractApplicationData',{fileName:file.name,mimeType:file.type||'application/pdf',dataUrl});const fields=result.fields||{};Object.keys(fields).forEach(k=>{const el=$('appForm').elements.namedItem(k);if(el)el.value=fields[k];});if(fields.Sol_ID)populateBranches(fields.Sol_ID);if(fields.District_Name)populateDistricts(fields.District_Name);if(fields.Sub_District_Name){$('Sub_District_Name').value=fields.Sub_District_Name;subDistrictChanged();}if(fields.Village_Name){$('Village_Name').value=fields.Village_Name;villageChanged();}notice(result.message||'PDF read. Check the fields and save.');}catch(e){notice(e.message,'err');}}
+$('applicationPdf').addEventListener('change',()=>{const f=$('applicationPdf').files[0];if(f&&f.size>7*1024*1024)notice('PDF must be 7 MB or smaller.','err');});
+$('appForm').addEventListener('submit',e=>e.preventDefault());
+loadInitial();
+</script>
+</body>
+</html>
