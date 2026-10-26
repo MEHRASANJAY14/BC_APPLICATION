@@ -128,7 +128,7 @@ body{padding-left:var(--sidebar-width)}main{max-width:none;margin:0;padding:32px
   <div class="side-title"><div class="side-symbol">BC</div><div><strong>Appointment Portal</strong><small>Regional Office Jabalpur</small></div></div>
   <div class="side-caption">WORKSPACE</div>
   <button class="side-link active" onclick="showHome()" id="navHome"><span>▦</span><span>Dashboard</span></button>
-  <button class="side-link" onclick="newApplication()"><span>＋</span><span>New Application</span></button>
+  <button type="button" class="side-link" onclick="newApplication();return false;"><span>＋</span><span>New Application</span></button>
   <button class="side-link" onclick="showHome()"><span>▤</span><span>All Applications</span></button>
   <div class="side-divider"></div>
   <div class="side-caption">PORTAL</div>
@@ -140,7 +140,7 @@ body{padding-left:var(--sidebar-width)}main{max-width:none;margin:0;padding:32px
 <button class="mobile-menu" onclick="document.body.classList.toggle('sidebar-open')" aria-label="Toggle navigation">☰</button>
 
 
-<main><div class="heading"><div><h2 id="pageTitle">All Applications</h2><p id="subtitle">Search applications, check status, or add a new BC application.</p></div><div><button class="btn primary" id="refreshBtn" onclick="refreshData()">Refresh Applications</button><button class="btn primary" id="newBtn" onclick="newApplication()">+ New Application</button></div></div>
+<main><div class="heading"><div><h2 id="pageTitle">All Applications</h2><p id="subtitle">Search applications, check status, or add a new BC application.</p></div><div><button class="btn primary" id="refreshBtn" onclick="refreshData()">Refresh Applications</button><button type="button" class="btn primary" id="newBtn" onclick="newApplication();return false;">+ New Application</button></div></div>
 <div id="alert" class="alert"></div>
 <section id="listPage"><div class="stats"><div class="stat"><span>Total Applications</span><b id="total">0</b></div><div class="stat"><span>Pending / Under Review</span><b id="pending">0</b></div><div class="stat"><span>Approved</span><b id="approved">0</b></div><div class="stat"><span>Active BCs</span><b id="active">0</b></div></div>
 <div class="panel"><div class="panelhead"><div><h3>Application Register</h3><p>Tap View to see an application, or tap + New Application to add one.</p></div><div class="count" id="count">0 records</div></div>
@@ -254,7 +254,18 @@ async function refreshData(){try{showAlert('alert','');let [a,s]=await Promise.a
 function renderTable(){let q=($('search').value||'').toLowerCase(),st=$('status').value;let a=records.filter(r=>(!st||r.Application_Status===st)&&(!q||['Application_ID','Sol_ID','Link_Branch','Name_of_BCs','Sol_District','BC_ID_Number'].some(k=>String(r[k]||'').toLowerCase().includes(q))));$('count').textContent=a.length+' records';if(!a.length){$('table').innerHTML='<div class="empty">No applications found.</div>';return;}$('table').innerHTML='<table><thead><tr><th>Application ID</th><th>Application Date</th><th>SOL ID</th><th>Link Branch</th><th>Applicant / BC Name</th><th>District</th><th>Application Status</th><th>HO Sanction</th><th>BC ID</th><th>Action</th></tr></thead><tbody>'+a.map(r=>`<tr><td>${esc(r.Application_ID)}</td><td>${esc(r.Application_Date||r.RO_Receipt_Date)}</td><td>${esc(r.Sol_ID)}</td><td>${esc(r.Link_Branch)}</td><td>${esc(r.Name_of_BCs)}</td><td>${esc(r.Sol_District)}</td><td><span class="pill">${esc(r.Application_Status||'Application Received')}</span></td><td>${esc(r.HO_Sanction_Status||'Pending')}</td><td>${esc(r.BC_ID_Number||'—')}</td><td><button class="action" onclick="viewApp('${esc(r.Application_ID)}')">View</button><button class="action" onclick="editApp('${esc(r.Application_ID)}')">Edit</button></td></tr>`).join('')+'</tbody></table>';}
 function clearFilters(){$('search').value='';$('status').value='';renderTable();}
 function section(which){['listPage','formPage','detailPage'].forEach(id=>$(id).classList.toggle('hidden',id!==which));let list=which==='listPage';$('refreshBtn').classList.toggle('hidden',!list);$('newBtn').classList.toggle('hidden',!list);$('pageTitle').textContent=list?'All Applications':which==='formPage'?'BC Application Form':'Application Details';$('subtitle').textContent=list?'Search applications, check status, or add a new BC application.':which==='formPage'?'Create or update a BC appointment application.':'View complete application and workflow information.';}
-function newApplication(){resetForm();$('RO_Receipt_Date').value=new Date().toISOString().slice(0,10);section('formPage');}
+function newApplication(){
+  // Switch to the form first so a non-critical reset error cannot leave the button appearing unresponsive.
+  document.body.classList.remove('sidebar-open');
+  section('formPage');
+  try { resetForm(); } catch(err) { console.error('Form reset warning:',err); }
+  const dateField=$('RO_Receipt_Date');
+  if(dateField) dateField.value=new Date().toISOString().slice(0,10);
+  const title=$('formTitle'); if(title) title.textContent='New BC Application';
+  const idField=$('Application_ID'); if(idField) idField.value='';
+  const page=document.getElementById('formPage');
+  if(page) page.scrollIntoView({behavior:'smooth',block:'start'});
+}
 function branchChanged(){let b=(initData.branches||[]).find(x=>x.Sol_ID===$('Sol_ID').value);$('Link_Branch').value=b?b.Link_Branch:'';$('Sol_District').value=b?b.Sol_District:'';}
 function toggleOld(){let y=$('Sanc_Type').value==='REPLACEMENT';$('oldFields').classList.toggle('hidden',!y);if(!y)['Old_Corp_BC','Old_BC_ID','Old_BC_Name','Old_BC_OD_ACC'].forEach(k=>$(k).value='');}
 function toggleSSA(){
