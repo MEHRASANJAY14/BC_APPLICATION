@@ -242,7 +242,7 @@ function call(action,payload={}){
   });
 }
 async function showHome(){document.body.classList.remove('sidebar-open');document.getElementById('listPage').classList.remove('hidden');document.getElementById('formPage')?.classList.add('hidden');document.getElementById('detailPage')?.classList.add('hidden');document.getElementById('pageTitle').textContent='All Applications';document.getElementById('subtitle').textContent='Search applications, check status, or add a new BC application.';}
-function boot(){
+async function boot(){
   // Populate SOL IDs immediately from the hardcoded master, even if API/authentication fails.
   initData={branches:FALLBACK_BRANCHES.map(b=>({Sol_ID:b[0],Link_Branch:b[1],Sol_District:b[2]})),lgd:[]};
   renderBranches();
